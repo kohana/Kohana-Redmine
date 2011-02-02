@@ -1,0 +1,3 @@
+[submodule "vendor/plugins/redmine_graphs"]
+	path = vendor/plugins/redmine_graphs
+	url = https://github.com/bradbeattie/redmine-graphs-plugin.git
