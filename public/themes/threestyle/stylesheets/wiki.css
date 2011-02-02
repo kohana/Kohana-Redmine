@@ -1,0 +1,289 @@
+/*
+----------------------------------------------------------------------------------------------
+-- LAYOUT
+----------------------------------------------------------------------------------------------
+*/
+
+	/* indent content to allow contrast between headings and body */
+	#content > div.wiki {
+		padding-top: 10px;
+		padding-left: 25px;
+	}
+
+/*
+----------------------------------------------------------------------------------------------
+-- FIXES
+----------------------------------------------------------------------------------------------
+*/
+
+	.breadcrumb{
+		margin:-10px 0px 10px -25px !important;
+		}
+
+/*
+----------------------------------------------------------------------------------------------
+-- HEADINGS
+----------------------------------------------------------------------------------------------
+*/
+
+	/* h1, h2: outdent major headings and add a bottom border to deliniate sections */
+
+		#content > div.wiki h1,
+		#content > div.wiki h2 {
+			margin:0 0 10px -25px;
+			border-bottom:1px solid #8CACBB;
+			padding-bottom:0.3em;
+		}
+
+	/* h1: add a margin to all h1 headings except the first */
+
+		#content > div.wiki h1{
+			font-size:21px;
+			margin-top:30px;
+			}
+
+		#content > div.wiki h1:first-child{
+			margin-top:0px;
+			}
+
+	/* h2: add a margin to all h2 headings except any that are immediately preceded by an h1 */
+
+		#content > div.wiki h2{
+			font-size:18px;
+			margin-top:30px;
+			}
+
+		#content > div.wiki h1 + h2{
+			margin-top:0px;
+			}
+
+	/* h3: optimize for API style. to achieve an unerline style, nest a <u> which will overwrite the background styling */
+
+		#content > div.wiki h3 {
+			font-size:13px;
+			background:#eee;
+			margin-top:30px;
+			padding:3px 5px
+		}
+
+		#content > div.wiki h2 + h3{
+			margin-top:20px;
+			}
+
+	/* h4: cuddle following paragraphs tightly, as if a bold paragraph */
+
+		#content > div.wiki h4{
+			color:#333;
+			margin:10px 0px 0px 0px;
+			font-family:Verdana, sans-serif;
+			font-size:12px;
+			}
+
+		#content > div.wiki h4 + p{
+			margin-top:0px;
+			}
+
+/*
+----------------------------------------------------------------------------------------------
+-- HEADING MODIFIERS
+----------------------------------------------------------------------------------------------
+*/
+
+	/* Allow the user to apply distinctive formatting within headings by using i, b, u and code */
+
+		#content > div.wiki h1 b,
+		#content > div.wiki h1 strong,
+		#content > div.wiki h2 b,
+		#content > div.wiki h2 strong,
+		#content > div.wiki h3 b,
+		#content > div.wiki h3 strong{
+			color:#C00;
+			}
+
+		#content > div.wiki h3 i,
+		#content > div.wiki h3 em{
+			color:#00C;
+			font-style:normal;
+			}
+
+		#content > div.wiki h3 u{
+			font-size:18px; /* make the same size as H2*/
+			display:block;
+			margin:-3px -5px;
+			padding:3px 1px;
+			background-color:#FFF;
+			border-bottom:1px solid #8CACBB;
+			text-decoration:none;
+			}
+
+		#content > div.wiki h3 code{
+			color:#000;
+			}
+
+/*
+----------------------------------------------------------------------------------------------
+-- FORMATTING
+----------------------------------------------------------------------------------------------
+*/
+
+	/* remove border on blcckquotes */
+	#content > div.wiki blockquote{
+		border:none;
+		}
+
+	/* underline all links except heading links */
+
+		#content > div.wiki a{
+			text-decoration:underline !important;
+			}
+
+		#content > div.wiki h1 a,
+		#content > div.wiki h2 a,
+		#content > div.wiki h3 a,
+		#content > div.wiki h4 a
+		{
+			text-decoration:none !important;
+			}
+
+	/* allow bullet points with a slight gap between them, which is useful for points making an emphasis */
+	#content > div.wiki ul.points li,
+	#content > div.wiki ol.points li{
+		margin-bottom:0.5em;
+		}
+
+	/* utility class - red */
+	#content > div.wiki .red{
+		color:#C00;
+		}
+
+
+
+
+/*
+----------------------------------------------------------------------------------------------
+-- CODE
+----------------------------------------------------------------------------------------------
+*/
+
+	/* make code more comforrtable to read by giving it some space */
+	#content > div.wiki pre {
+		color:#666 !important;
+		font-size:11px;
+		border:1px solid #eee;
+		padding:8px 0px 8px 12px !important;
+		margin-left:20px;
+		line-height:1.4em;
+		overflow-x:auto;
+	}
+
+/*
+----------------------------------------------------------------------------------------------
+-- CODE MODIFIERS (won't currently work in the wiki as pre tags are not processed!)
+----------------------------------------------------------------------------------------------
+*/
+
+	/* Allow the user to apply distinctive formatting within code blocks using i, b, u */
+
+		/* Make code stand out with a different color */
+		#content > div.wiki code b,
+		#content > div.wiki code strong,
+		#content > div.wiki pre b,
+		#content > div.wiki pre strong{
+			color:#09C !important; /* aqua blue */
+			color:#C00 !important; /* dark red */
+		}
+
+		/* accentuate code with highlighter pen */
+		#content > div.wiki code i,
+		#content > div.wiki code em,
+		#content > div.wiki pre i,
+		#content > div.wiki pre em{
+			font-weight:bold;
+			font-style:normal;
+			background-color:#EDFB9F; /* light green */
+			background-color:#E7E7E7; /* light grey */
+			color:#333 !important; /* dark grey */
+		}
+
+		/* make highligheted code stand out against its highlighted background */
+		#content > div.wiki code i b,
+		#content > div.wiki code i strong,
+		#content > div.wiki code em b,
+		#content > div.wiki code em strong,
+		#content > div.wiki pre i b,
+		#content > div.wiki pre i strong,
+		#content > div.wiki pre em b,
+		#content > div.wiki pre em strong{
+			font-weight:bold;
+			font-style:normal;
+			background-color:#FF0; /* dark red */
+			color:#C00 !important;
+		}
+
+
+/*
+----------------------------------------------------------------------------------------------
+-- CUSTOM PROPERTIES
+----------------------------------------------------------------------------------------------
+*/
+
+	/* Custom classes to properly format Documentor-generated HTML */
+
+		/* 	PROPERTIES TABLE */
+
+			#content > div.wiki table.properties{
+				width:100%;
+				}
+
+			#content > div.wiki table.properties,
+			#content > div.wiki table.properties td{
+				border:none !important;
+				}
+
+			#content > div.wiki table.properties td{
+				font-size:12px;
+				vertical-align:top;
+				}
+
+			#content > div.wiki table.properties td.property,
+			#content > div.wiki table.properties td:first-child{
+				padding-right:30px !important;
+				width:40%;
+				font-weight:bold;
+				font-size:12px;
+				}
+
+		/* 	METHODS LISTING - to be updated and implemented when Documentor reaches its next version */
+
+			/*
+			#content > div.wiki .description{
+				color:#F3C;
+				}
+
+			#content > div.wiki .signature{
+				color:#83C018;
+				}
+
+			#content > div.wiki .method{
+				color:blue;
+				}
+
+			#content > div.wiki .property{
+				color:#03C;
+				font-style:italic;
+				}
+
+			#content > div.wiki .visibility{
+				font-weight:normal;
+				color:#F00;
+				}
+
+			#content > div.wiki .static{
+				font-weight:normal;
+				color:#909;
+				}
+
+			#content > div.wiki .params{
+				color:#39C;
+				}
+			*/
