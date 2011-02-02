@@ -14,6 +14,7 @@
     <%= h(relation.other_issue(@issue).project) + ' - ' if Setting.cross_project_issue_relations? %>
     <%= link_to_issue(relation.other_issue(@issue), :truncate => 60) %>
 </td>
+<td><%= format_version_name(relation.other_issue(@issue).fixed_version) if relation.other_issue(@issue).fixed_version %></td>
 <td><%= relation.other_issue(@issue).status.name %></td>
 <td><%= format_date(relation.other_issue(@issue).start_date) %></td>
 <td><%= format_date(relation.other_issue(@issue).due_date) %></td>
