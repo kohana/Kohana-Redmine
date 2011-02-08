@@ -2,7 +2,7 @@
 <% if @project.children.visible.any? %>
   <div class="nodata">
 	<p>
-	  <strong>WAIT!</strong> Before submitting a bug report, please ensure you are submitting it against the correct sub-project! If you're bug is for one these modules, please click the link!<br/><br/>
+	  <strong>WAIT!</strong> Before submitting a new issue, please ensure you are submitting it against the correct sub-project! If your issue is for one these modules, please click the link!<br/><br/>
 	  <%= @project.children.visible.collect{|p| link_to(h(p), :controller => 'issues', :action => 'new', :project_id => p)}.join(", ") %>
 	</p>
   </div>
