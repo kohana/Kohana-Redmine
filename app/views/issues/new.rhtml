@@ -1,5 +1,12 @@
-<h2><%=l(:label_issue_new)%></h2>
-
+<h2><%=l(:label_issue_new)%> - <%=@project.name %> </h2>
+<% if @project.children.visible.any? %>
+  <div class="nodata">
+	<p>
+	  <strong>WAIT!</strong> Before submitting a bug report, please ensure you are submitting it against the correct sub-project! If you're bug is for one these modules, please click the link!<br/><br/>
+	  <%= @project.children.visible.collect{|p| link_to(h(p), :controller => 'issues', :action => 'new', :project_id => p)}.join(", ") %>
+	</p>
+  </div>
+<% end %>
 <% labelled_tabular_form_for :issue, @issue, :url => {:controller => 'issues', :action => 'create', :project_id => @project},
                              :html => {:multipart => true, :id => 'issue-form', :class => 'tabular new-issue-form'} do |f| %>
     <%= error_messages_for 'issue' %>
