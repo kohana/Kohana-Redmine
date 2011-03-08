@@ -1,3 +1,13 @@
 User-agent: *
-Disallow: /
-Disallow: /browser
+Disallow: /projects/kohana3/repository
+Disallow: /projects/auth3/repository
+Disallow: /projects/kohana3-cache/repository
+Disallow: /projects/codebench/repository
+Disallow: /projects/database/repository
+Disallow: /projects/image/repository
+Disallow: /projects/oauth/repository
+Disallow: /projects/k3-orm/repository
+Disallow: /projects/pagination/repository
+Disallow: /projects/unittest/repository
+Disallow: /projects/userguide3/repository
+
