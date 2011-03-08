@@ -1,6 +1,5 @@
-User-agent: Googlebot
-Disallow: /projects/*/repository
 User-agent: *
+Disallow: /projects/*/repository
 Disallow: /projects/kohana3/repository
 Disallow: /projects/auth3/repository
 Disallow: /projects/kohana3-cache/repository
