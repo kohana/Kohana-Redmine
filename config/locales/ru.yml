@@ -28,7 +28,10 @@ ru:
     abbr_month_names: [~, янв., февр., марта, апр., мая, июня, июля, авг., сент., окт., нояб., дек.]
     standalone_abbr_month_names: [~, янв., февр., март, апр., май, июнь, июль, авг., сент., окт., нояб., дек.]
 
-    order: [ :day, :month, :year ]
+    order:
+      - :day
+      - :month
+      - :year
 
   time:
     formats:
@@ -261,7 +264,7 @@ ru:
   default_issue_status_closed: Закрыта
   default_issue_status_feedback: Обратная связь
   default_issue_status_new: Новая
-  default_issue_status_rejected: Отказ
+  default_issue_status_rejected: Отклонена
   default_issue_status_resolved: Решена
   default_priority_high: Высокий
   default_priority_immediate: Немедленный
@@ -272,7 +275,7 @@ ru:
   default_role_manager: Менеджер
   default_role_reporter: Генератор отчетов
   default_tracker_bug: Ошибка
-  default_tracker_feature: Изменение
+  default_tracker_feature: Улучшение
   default_tracker_support: Поддержка
 
   enumeration_activities: Действия (учет времени)
@@ -508,7 +511,7 @@ ru:
   label_filter_add: Добавить фильтр
   label_filter_plural: Фильтры
   label_float: С плавающей точкой
-  label_follows: следующая
+  label_follows: предыдущая
   label_gantt: Диаграмма Ганта
   label_general: Общее
   label_generate_key: Сгенерировать ключ
@@ -605,7 +608,7 @@ ru:
   label_optional_description: Описание (опционально)
   label_options: Опции
   label_overall_activity: Сводная активность
-  label_overview: Просмотр
+  label_overview: Обзор
   label_password_lost: Восстановление пароля
   label_permissions_report: Отчет о правах доступа
   label_permissions: Права доступа
@@ -614,7 +617,7 @@ ru:
   label_planning: Планирование
   label_please_login: Пожалуйста, войдите.
   label_plugins: Модули
-  label_precedes: предыдущая
+  label_precedes: следующая
   label_preferences: Предпочтения
   label_preview: Предварительный просмотр
   label_previous: Предыдущий
@@ -862,7 +865,6 @@ ru:
   setting_bcc_recipients: Использовать скрытые списки (BCC)
   setting_cache_formatted_text: Кешировать форматированный текст
   setting_commit_fix_keywords: Назначение ключевых слов
-  setting_commit_logs_encoding: Кодировка комментариев в хранилище
   setting_commit_ref_keywords: Ключевые слова для поиска
   setting_cross_project_issue_relations: Разрешить пересечение задач по проектам
   setting_date_format: Формат даты
@@ -1044,8 +1046,46 @@ ru:
   field_visible: Видимый
   setting_emails_header: Заголовок письма
 
-  setting_commit_logtime_activity_id: Activity for logged time
-  text_time_logged_by_changeset: Applied in changeset %{value}.
-  setting_commit_logtime_enabled: Enable time logging
-  notice_gantt_chart_truncated: The chart was truncated because it exceeds the maximum number of items that can be displayed (%{max})
-  setting_gantt_items_limit: Maximum number of items displayed on the gantt chart
+  setting_commit_logtime_activity_id: Активность для учета времени
+  text_time_logged_by_changeset: Учтено в редакции %{value}.
+  setting_commit_logtime_enabled: Включить учет времени
+  notice_gantt_chart_truncated: Диаграмма будет усечена, поскольку превышено максимальное кол-во элементов, которые могут отображаться (%{max})
+  setting_gantt_items_limit: Максимальное кол-во элементов отображаемых на диаграмме Ганта
+  field_warn_on_leaving_unsaved: Предупреждать при закратии страницы с несохраненным текстом
+  text_warn_on_leaving_unsaved: Текущая страница содержит несохраненный текст, который будет потерян, если вы покинете эту страницу.
+  label_my_queries: Мои сохраненные запросы
+  text_journal_changed_no_detail: "%{label} обновлено"
+  label_news_comment_added: Добавлен комментарий к новости
+  button_expand_all: Развернуть все
+  button_collapse_all: Свернуть все
+  label_additional_workflow_transitions_for_assignee: Дополнительные переходы, когда пользователь является исполнителем
+  label_additional_workflow_transitions_for_author: Дополнительные переходы, когда пользователь является автором
+  label_bulk_edit_selected_time_entries: Массовое изменение выбранных записей затраченного времени времени 
+  text_time_entries_destroy_confirmation: Вы уверены что хотите удалить выбраные записи затраченного времени?
+  label_role_anonymous: Аноним
+  label_role_non_member: Не участник
+  label_issue_note_added: Примечание добавлено
+  label_issue_status_updated: Статус обновлен
+  label_issue_priority_updated: Приоритет обновлен
+  label_issues_visibility_own: Задачи созданные или назначенные пользователю
+  field_issues_visibility: Видимость задач
+  label_issues_visibility_all: Все задачи
+  permission_set_own_issues_private: Устанавливать видимость (общая/частная) для собственных задач
+  field_is_private: Частная
+  permission_set_issues_private: Устанавливать видимость (общая/частная) для задач
+  label_issues_visibility_public: Только общие задачи
+  text_issues_destroy_descendants_confirmation: Так же будет удалено %{count} задачи.
+  field_commit_logs_encoding: Кодировка комментариев в хранилище
+  field_scm_path_encoding: Кодировка пути
+  text_scm_path_encoding_note: "По умолчанию: UTF-8"
+  field_path_to_repository: Путь к репозиторию
+  field_root_directory: Корневую директорию
+  field_cvs_module: Модуль
+  field_cvsroot: CVSROOT
+  text_git_repository_note: Локальный и bare репозиторий (например, /gitrepo, c:\gitrepo)
+  text_mercurial_repository_note: Локальный репозиторий (например, /hgrepo, c:\hgrepo)
+  text_scm_command: Command
+  text_scm_command_version: Version
+  label_git_report_last_commit: Report last commit for files and directories
+  text_scm_config: You can configure your scm commands in config/configuration.yml. Please restart the application after editing it.
+  text_scm_command_not_available: Scm command is not available. Please check settings on the administration panel.

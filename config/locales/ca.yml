@@ -20,7 +20,10 @@ ca:
     month_names: [~, Gener, Febrer, Març, Abril, Maig, Juny, Juliol, Agost, Setembre, Octubre, Novembre, Desembre]
     abbr_month_names: [~, Gen, Feb, Mar, Abr, Mai, Jun, Jul, Ago, Set, Oct, Nov, Des]
     # Used in date_select and datime_select.
-    order: [ :year, :month, :day ]
+    order:
+      - :year
+      - :month
+      - :day
 
   time:
     formats:
@@ -138,7 +141,7 @@ ca:
   general_csv_separator: ';'
   general_csv_decimal_separator: ','
   general_csv_encoding: ISO-8859-15
-  general_pdf_encoding: ISO-8859-15
+  general_pdf_encoding: UTF-8
   general_first_day_of_week: '1'
   
   notice_account_updated: "El compte s'ha actualitzat correctament."
@@ -161,7 +164,7 @@ ca:
   notice_email_error: "S'ha produït un error en enviar el correu (%{value})"
   notice_feeds_access_key_reseted: "S'ha reiniciat la clau d'accés del RSS."
   notice_api_access_key_reseted: "S'ha reiniciat la clau d'accés a l'API."
-  notice_failed_to_save_issues: "No s'han pogut desar %s assumptes de %{count} seleccionats: %{ids}."
+  notice_failed_to_save_issues: "No s'han pogut desar %{count} assumptes de %{total} seleccionats: %{ids}."
   notice_failed_to_save_members: "No s'han pogut desar els membres: %{errors}."
   notice_no_issue_selected: "No s'ha seleccionat cap assumpte. Activeu els assumptes que voleu editar."
   notice_account_pending: "S'ha creat el compte i ara està pendent de l'aprovació de l'administrador."
@@ -269,7 +272,7 @@ ca:
   field_attr_mail: Atribut del correu electrònic
   field_onthefly: "Creació de l'usuari «al vol»"
   field_start_date: Inici
-  field_done_ratio: % realitzat
+  field_done_ratio: "% realitzat"
   field_auth_source: "Mode d'autenticació"
   field_hide_mail: "Oculta l'adreça de correu electrònic"
   field_comments: Comentari
@@ -327,7 +330,6 @@ ca:
   setting_cross_project_issue_relations: "Permet les relacions d'assumptes entre projectes"
   setting_issue_list_default_columns: "Columnes mostrades per defecte en la llista d'assumptes"
   setting_repositories_encodings: Codificacions del dipòsit
-  setting_commit_logs_encoding: Codificació dels missatges publicats
   setting_emails_footer: Peu dels correus electrònics
   setting_protocol: Protocol
   setting_per_page_options: Opcions dels objectes per pàgina
@@ -939,3 +941,41 @@ ca:
   setting_commit_logtime_enabled: Enable time logging
   notice_gantt_chart_truncated: The chart was truncated because it exceeds the maximum number of items that can be displayed (%{max})
   setting_gantt_items_limit: Maximum number of items displayed on the gantt chart
+  field_warn_on_leaving_unsaved: Warn me when leaving a page with unsaved text
+  text_warn_on_leaving_unsaved: The current page contains unsaved text that will be lost if you leave this page.
+  label_my_queries: My custom queries
+  text_journal_changed_no_detail: "%{label} updated"
+  label_news_comment_added: Comment added to a news
+  button_expand_all: Expand all
+  button_collapse_all: Collapse all
+  label_additional_workflow_transitions_for_assignee: Additional transitions allowed when the user is the assignee
+  label_additional_workflow_transitions_for_author: Additional transitions allowed when the user is the author
+  label_bulk_edit_selected_time_entries: Bulk edit selected time entries
+  text_time_entries_destroy_confirmation: Are you sure you want to delete the selected time entr(y/ies)?
+  label_role_anonymous: Anonymous
+  label_role_non_member: Non member
+  label_issue_note_added: Note added
+  label_issue_status_updated: Status updated
+  label_issue_priority_updated: Priority updated
+  label_issues_visibility_own: Issues created by or assigned to the user
+  field_issues_visibility: Issues visibility
+  label_issues_visibility_all: All issues
+  permission_set_own_issues_private: Set own issues public or private
+  field_is_private: Private
+  permission_set_issues_private: Set issues public or private
+  label_issues_visibility_public: All non private issues
+  text_issues_destroy_descendants_confirmation: This will also delete %{count} subtask(s).
+  field_commit_logs_encoding: Codificació dels missatges publicats
+  field_scm_path_encoding: Path encoding
+  text_scm_path_encoding_note: "Default: UTF-8"
+  field_path_to_repository: Path to repository
+  field_root_directory: Root directory
+  field_cvs_module: Module
+  field_cvsroot: CVSROOT
+  text_git_repository_note: Bare and local repository (e.g. /gitrepo, c:\gitrepo)
+  text_mercurial_repository_note: Local repository (e.g. /hgrepo, c:\hgrepo)
+  text_scm_command: Command
+  text_scm_command_version: Version
+  label_git_report_last_commit: Report last commit for files and directories
+  text_scm_config: You can configure your scm commands in config/configuration.yml. Please restart the application after editing it.
+  text_scm_command_not_available: Scm command is not available. Please check settings on the administration panel.

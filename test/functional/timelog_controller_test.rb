@@ -131,6 +131,77 @@ class TimelogControllerTest < ActionController::TestCase
     assert_equal 2, entry.issue_id
     assert_equal 2, entry.user_id
   end
+
+  def test_get_bulk_edit
+    @request.session[:user_id] = 2
+    get :bulk_edit, :ids => [1, 2]
+    assert_response :success
+    assert_template 'bulk_edit'
+    
+    # System wide custom field
+    assert_tag :select, :attributes => {:name => 'time_entry[custom_field_values][10]'}
+  end
+
+  def test_get_bulk_edit_on_different_projects
+    @request.session[:user_id] = 2
+    get :bulk_edit, :ids => [1, 2, 6]
+    assert_response :success
+    assert_template 'bulk_edit'
+  end
+
+  def test_bulk_update
+    @request.session[:user_id] = 2
+    # update time entry activity
+    post :bulk_update, :ids => [1, 2], :time_entry => { :activity_id => 9}
+                                     
+    assert_response 302
+    # check that the issues were updated
+    assert_equal [9, 9], TimeEntry.find_all_by_id([1, 2]).collect {|i| i.activity_id}
+  end
+
+  def test_bulk_update_on_different_projects
+    @request.session[:user_id] = 2
+    # update time entry activity
+    post :bulk_update, :ids => [1, 2, 4], :time_entry => { :activity_id => 9 }
+    
+    assert_response 302
+    # check that the issues were updated
+    assert_equal [9, 9, 9], TimeEntry.find_all_by_id([1, 2, 4]).collect {|i| i.activity_id}
+  end
+
+  def test_bulk_update_on_different_projects_without_rights
+    @request.session[:user_id] = 3
+    user = User.find(3)
+    action = { :controller => "timelog", :action => "bulk_update" }
+    assert user.allowed_to?(action, TimeEntry.find(1).project)
+    assert ! user.allowed_to?(action, TimeEntry.find(5).project)
+    post :bulk_update, :ids => [1, 5], :time_entry => { :activity_id => 9 }
+    assert_response 403
+  end
+
+  def test_bulk_update_custom_field
+    @request.session[:user_id] = 2
+    post :bulk_update, :ids => [1, 2], :time_entry => { :custom_field_values => {'10' => '0'} }
+                                     
+    assert_response 302
+    assert_equal ["0", "0"], TimeEntry.find_all_by_id([1, 2]).collect {|i| i.custom_value_for(10).value}
+  end
+
+  def test_post_bulk_update_should_redirect_back_using_the_back_url_parameter
+    @request.session[:user_id] = 2
+    post :bulk_update, :ids => [1,2], :back_url => '/time_entries'
+
+    assert_response :redirect
+    assert_redirected_to '/time_entries'
+  end
+
+  def test_post_bulk_update_should_not_redirect_back_using_the_back_url_parameter_off_the_host
+    @request.session[:user_id] = 2
+    post :bulk_update, :ids => [1,2], :back_url => 'http://google.com'
+
+    assert_response :redirect
+    assert_redirected_to :controller => 'timelog', :action => 'index', :project_id => Project.find(1).identifier
+  end
   
   def test_destroy
     @request.session[:user_id] = 2
@@ -142,19 +213,13 @@ class TimelogControllerTest < ActionController::TestCase
   
   def test_destroy_should_fail
     # simulate that this fails (e.g. due to a plugin), see #5700
-    TimeEntry.class_eval do
-      before_destroy :stop_callback_chain
-      def stop_callback_chain ; return false ; end
-    end
+    TimeEntry.any_instance.expects(:destroy).returns(false)
 
     @request.session[:user_id] = 2
     delete :destroy, :id => 1
     assert_redirected_to :action => 'index', :project_id => 'ecookbook'
     assert_equal I18n.t(:notice_unable_delete_time_entry), flash[:error]
     assert_not_nil TimeEntry.find_by_id(1)
-
-    # remove the simulation
-    TimeEntry.before_destroy.reject! {|callback| callback.method == :stop_callback_chain }
   end
   
   def test_index_all_projects
@@ -163,10 +228,12 @@ class TimelogControllerTest < ActionController::TestCase
     assert_template 'index'
     assert_not_nil assigns(:total_hours)
     assert_equal "162.90", "%.2f" % assigns(:total_hours)
+    assert_tag :form,
+      :attributes => {:action => "/time_entries", :id => 'query_form'}
   end
   
   def test_index_at_project_level
-    get :index, :project_id => 1
+    get :index, :project_id => 'ecookbook'
     assert_response :success
     assert_template 'index'
     assert_not_nil assigns(:entries)
@@ -178,10 +245,12 @@ class TimelogControllerTest < ActionController::TestCase
     # display all time by default
     assert_equal '2007-03-12'.to_date, assigns(:from)
     assert_equal '2007-04-22'.to_date, assigns(:to)
+    assert_tag :form,
+      :attributes => {:action => "/projects/ecookbook/time_entries", :id => 'query_form'}
   end
   
   def test_index_at_project_level_with_date_range
-    get :index, :project_id => 1, :from => '2007-03-20', :to => '2007-04-30'
+    get :index, :project_id => 'ecookbook', :from => '2007-03-20', :to => '2007-04-30'
     assert_response :success
     assert_template 'index'
     assert_not_nil assigns(:entries)
@@ -190,24 +259,30 @@ class TimelogControllerTest < ActionController::TestCase
     assert_equal "12.90", "%.2f" % assigns(:total_hours)
     assert_equal '2007-03-20'.to_date, assigns(:from)
     assert_equal '2007-04-30'.to_date, assigns(:to)
+    assert_tag :form,
+      :attributes => {:action => "/projects/ecookbook/time_entries", :id => 'query_form'}
   end
 
   def test_index_at_project_level_with_period
-    get :index, :project_id => 1, :period => '7_days'
+    get :index, :project_id => 'ecookbook', :period => '7_days'
     assert_response :success
     assert_template 'index'
     assert_not_nil assigns(:entries)
     assert_not_nil assigns(:total_hours)
     assert_equal Date.today - 7, assigns(:from)
     assert_equal Date.today, assigns(:to)
+    assert_tag :form,
+      :attributes => {:action => "/projects/ecookbook/time_entries", :id => 'query_form'}
   end
 
   def test_index_one_day
-    get :index, :project_id => 1, :from => "2007-03-23", :to => "2007-03-23"
+    get :index, :project_id => 'ecookbook', :from => "2007-03-23", :to => "2007-03-23"
     assert_response :success
     assert_template 'index'
     assert_not_nil assigns(:total_hours)
     assert_equal "4.25", "%.2f" % assigns(:total_hours)
+    assert_tag :form,
+      :attributes => {:action => "/projects/ecookbook/time_entries", :id => 'query_form'}
   end
   
   def test_index_at_issue_level
@@ -221,6 +296,10 @@ class TimelogControllerTest < ActionController::TestCase
     # display all time based on what's been logged
     assert_equal '2007-03-12'.to_date, assigns(:from)
     assert_equal '2007-04-22'.to_date, assigns(:to)
+    # TODO: remove /projects/:project_id/issues/:issue_id/time_entries routes
+    # to use /issues/:issue_id/time_entries
+    assert_tag :form,
+      :attributes => {:action => "/projects/ecookbook/issues/1/time_entries", :id => 'query_form'}
   end
   
   def test_index_atom_feed
@@ -236,8 +315,8 @@ class TimelogControllerTest < ActionController::TestCase
     get :index, :format => 'csv'
     assert_response :success
     assert_equal 'text/csv', @response.content_type
-    assert @response.body.include?("Date,User,Activity,Project,Issue,Tracker,Subject,Hours,Comment\n")
-    assert @response.body.include?("\n04/21/2007,redMine Admin,Design,eCookbook,3,Bug,Error 281 when updating a recipe,1.0,\"\"\n")
+    assert @response.body.include?("Date,User,Activity,Project,Issue,Tracker,Subject,Hours,Comment,Overtime\n")
+    assert @response.body.include?("\n04/21/2007,redMine Admin,Design,eCookbook,3,Bug,Error 281 when updating a recipe,1.0,\"\",\"\"\n")
   end
   
   def test_index_csv_export
@@ -245,7 +324,7 @@ class TimelogControllerTest < ActionController::TestCase
     get :index, :project_id => 1, :format => 'csv'
     assert_response :success
     assert_equal 'text/csv', @response.content_type
-    assert @response.body.include?("Date,User,Activity,Project,Issue,Tracker,Subject,Hours,Comment\n")
-    assert @response.body.include?("\n04/21/2007,redMine Admin,Design,eCookbook,3,Bug,Error 281 when updating a recipe,1.0,\"\"\n")
+    assert @response.body.include?("Date,User,Activity,Project,Issue,Tracker,Subject,Hours,Comment,Overtime\n")
+    assert @response.body.include?("\n04/21/2007,redMine Admin,Design,eCookbook,3,Bug,Error 281 when updating a recipe,1.0,\"\",\"\"\n")
   end
 end

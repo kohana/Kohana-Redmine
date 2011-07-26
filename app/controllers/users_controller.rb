@@ -1,5 +1,5 @@
 # Redmine - project management software
-# Copyright (C) 2006-2010  Jean-Philippe Lang
+# Copyright (C) 2006-2011  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@ class UsersController < ApplicationController
   
   before_filter :require_admin, :except => :show
   before_filter :find_user, :only => [:show, :edit, :update, :destroy, :edit_membership, :destroy_membership]
-  accept_key_auth :index, :show, :create, :update, :destroy
+  accept_api_auth :index, :show, :create, :update, :destroy
 
   helper :sort
   include SortHelper
@@ -38,6 +38,9 @@ class UsersController < ApplicationController
       @limit = per_page_option
     end
     
+    scope = User
+    scope = scope.in_group(params[:group_id].to_i) if params[:group_id].present?
+    
     @status = params[:status] ? params[:status].to_i : 1
     c = ARCondition.new(@status == 0 ? "status <> 0" : ["status = ?", @status])
 
@@ -46,24 +49,27 @@ class UsersController < ApplicationController
       c << ["LOWER(login) LIKE ? OR LOWER(firstname) LIKE ? OR LOWER(lastname) LIKE ? OR LOWER(mail) LIKE ?", name, name, name, name]
     end
     
-    @user_count = User.count(:conditions => c.conditions)
+    @user_count = scope.count(:conditions => c.conditions)
     @user_pages = Paginator.new self, @user_count, @limit, params['page']
     @offset ||= @user_pages.current.offset
-    @users =  User.find :all,
+    @users =  scope.find :all,
                         :order => sort_clause,
                         :conditions => c.conditions,
                         :limit  =>  @limit,
                         :offset =>  @offset
 
-		respond_to do |format|
-		  format.html { render :layout => !request.xhr? }
+    respond_to do |format|
+      format.html {
+        @groups = Group.all.sort
+        render :layout => !request.xhr?
+      }
       format.api
-		end	
+    end	
   end
   
   def show
     # show projects based on current user visibility
-    @memberships = @user.memberships.all(:conditions => Project.visible_by(User.current))
+    @memberships = @user.memberships.all(:conditions => Project.visible_condition(User.current))
     
     events = Redmine::Activity::Fetcher.new(User.current, :author => @user).events(nil, nil, :limit => 10)
     @events_by_day = events.group_by(&:event_date)

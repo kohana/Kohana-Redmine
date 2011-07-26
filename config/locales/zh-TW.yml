@@ -20,7 +20,10 @@
     month_names: [~, 一月, 二月, 三月, 四月, 五月, 六月, 七月, 八月, 九月, 十月, 十一月, 十二月]
     abbr_month_names: [~, 1月, 2月, 3月, 4月, 5月, 6月, 7月, 8月, 9月, 10月, 11月, 12月]
     # 使用於 date_select 與 datime_select.
-    order: [ :year, :month, :day ]
+    order:
+      - :year
+      - :month
+      - :day
   
   time:
     formats:
@@ -177,7 +180,7 @@
         greater_than_start_date: "必須在開始日期之後"
         not_same_project: "不屬於同一個專案"
         circular_dependency: "這個關聯會導致環狀相依"
-        cant_link_an_issue_with_a_descendant: "項目無法被連結至自己的子項目"
+        cant_link_an_issue_with_a_descendant: "項目無法被連結至自己的子任務"
 
       # You can define own errors for models or model attributes.
       # The values :model, :attribute and :value are always available for interpolation.
@@ -251,9 +254,9 @@
   notice_gantt_chart_truncated: "由於項目數量超過可顯示數量的最大值 (%{max})，故此甘特圖尾部已被截斷"
 
   error_can_t_load_default_data: "無法載入預設組態： %{value}"
-  error_scm_not_found: "在 SCM 儲存庫中找不到這個項目或版次。"
-  error_scm_command_failed: "嘗試存取 SCM 儲存庫時發生錯誤： %{value}"
-  error_scm_annotate: "SCM 儲存庫中無此項目或此項目無法被加註。"
+  error_scm_not_found: "在儲存機制中找不到這個項目或修訂版。"
+  error_scm_command_failed: "嘗試存取儲存機制時發生錯誤： %{value}"
+  error_scm_annotate: "項目不存在或項目無法被加上附註。"
   error_issue_not_found_in_project: '該項目不存在或不屬於此專案'
   error_no_tracker_in_project: '此專案尚未指定追蹤標籤。請檢查專案的設定資訊。'
   error_no_default_issue_status: '尚未定義項目狀態的預設值。請您前往「網站管理」->「項目狀態清單」頁面，檢查相關組態設定。'
@@ -353,7 +356,7 @@
   field_done_ratio: 完成百分比
   field_auth_source: 認證模式
   field_hide_mail: 隱藏我的電子郵件
-  field_comments: 註解
+  field_comments: 回應
   field_url: 網址
   field_start_page: 首頁
   field_subproject: 子專案
@@ -372,7 +375,7 @@
   field_time_zone: 時區
   field_searchable: 可用做搜尋條件
   field_default_value: 預設值
-  field_comments_sorting: 註解排序
+  field_comments_sorting: 回應排序
   field_parent_title: 父頁面
   field_editable: 可編輯
   field_watcher: 觀察者
@@ -380,11 +383,20 @@
   field_content: 內容
   field_group_by: 結果分組方式
   field_sharing: 共用
-  field_parent_issue: 父工作項目
+  field_parent_issue: 父任務
   field_member_of_group: "被指派者的群組"
   field_assigned_to_role: "被指派者的角色"
   field_text: 內容文字
   field_visible: 可被看見
+  field_warn_on_leaving_unsaved: "提醒我將要離開的頁面中尚有未儲存的資料"
+  field_issues_visibility: 項目可見度
+  field_is_private: 私人
+  field_commit_logs_encoding: 認可訊息編碼
+  field_scm_path_encoding: 路徑編碼
+  field_path_to_repository: 儲存機制路徑
+  field_root_directory: 根資料夾
+  field_cvsroot: CVSROOT
+  field_cvs_module: 模組
   
   setting_app_title: 標題
   setting_app_subtitle: 副標題
@@ -401,18 +413,17 @@
   setting_text_formatting: 文字格式
   setting_wiki_compression: 壓縮 Wiki 歷史文章
   setting_feeds_limit: RSS 新聞限制
-  setting_autofetch_changesets: 自動取得送交版次
+  setting_autofetch_changesets: 自動擷取認可
   setting_default_projects_public: 新建立之專案預設為「公開」
-  setting_sys_api_enabled: 啟用管理版本庫之網頁服務 (Web Service)
-  setting_commit_ref_keywords: 送交用於參照項目之關鍵字
-  setting_commit_fix_keywords: 送交用於修正項目之關鍵字
+  setting_sys_api_enabled: 啟用管理儲存機制的網頁服務 (Web Service)
+  setting_commit_ref_keywords: 認可用於參照項目之關鍵字
+  setting_commit_fix_keywords: 認可用於修正項目之關鍵字
   setting_autologin: 自動登入
   setting_date_format: 日期格式
   setting_time_format: 時間格式
   setting_cross_project_issue_relations: 允許關聯至其它專案的項目
   setting_issue_list_default_columns: 預設顯示於項目清單的欄位
   setting_repositories_encodings: 版本庫編碼
-  setting_commit_logs_encoding: 送交訊息編碼
   setting_emails_header: 電子郵件前頭說明
   setting_emails_footer: 電子郵件附帶說明
   setting_protocol: 協定
@@ -429,7 +440,7 @@
   setting_gravatar_default: 預設全球認證大頭像圖片
   setting_diff_max_lines_displayed: 差異顯示行數之最大值
   setting_file_max_size_displayed: 檔案內容顯示大小之最大值
-  setting_repository_log_display_limit: 版次顯示數目之最大值
+  setting_repository_log_display_limit: 修訂版顯示數目之最大值
   setting_openid: 允許使用 OpenID 登入與註冊
   setting_password_min_length: 密碼最小長度
   setting_new_project_user_role_id: 管理者以外之用戶建立新專案時，將被指派的角色
@@ -441,7 +452,7 @@
   setting_rest_api_enabled: 啟用 REST 網路服務技術（Web Service）
   setting_cache_formatted_text: 快取已格式化文字
   setting_default_notification_option: 預設通知選項
-  setting_commit_logtime_enabled: 啟用送交中的時間記錄
+  setting_commit_logtime_enabled: 啟用認可中的時間記錄
   setting_commit_logtime_activity_id: 時間記錄對應的活動
   setting_gantt_items_limit: 甘特圖中項目顯示數量的最大值
   
@@ -457,6 +468,8 @@
   permission_add_issues: 新增項目
   permission_edit_issues: 編輯項目
   permission_manage_issue_relations: 管理項目關聯
+  permission_set_issues_private: 設定項目為公開或私人
+  permission_set_own_issues_private: 設定自己的項目為公開或私人
   permission_add_issue_notes: 新增筆記
   permission_edit_issue_notes: 編輯筆記
   permission_edit_own_issue_notes: 編輯自己的筆記
@@ -474,7 +487,7 @@
   permission_edit_time_entries: 編輯工時紀錄
   permission_edit_own_time_entries: 編輯自己的工時記錄
   permission_manage_news: 管理新聞
-  permission_comment_news: 註解新聞
+  permission_comment_news: 回應新聞
   permission_manage_documents: 管理文件
   permission_view_documents: 檢視文件
   permission_manage_files: 管理檔案
@@ -487,10 +500,10 @@
   permission_edit_wiki_pages: 編輯 wiki 頁面
   permission_delete_wiki_pages_attachments: 刪除附件
   permission_protect_wiki_pages: 專案 wiki 頁面
-  permission_manage_repository: 管理版本庫
-  permission_browse_repository: 瀏覽版本庫
+  permission_manage_repository: 管理儲存機制
+  permission_browse_repository: 瀏覽儲存機制
   permission_view_changesets: 檢視變更集
-  permission_commit_access: 存取送交之變更
+  permission_commit_access: 存取認可
   permission_manage_boards: 管理討論版
   permission_view_messages: 檢視訊息
   permission_add_messages: 新增訊息
@@ -499,7 +512,7 @@
   permission_delete_messages: 刪除訊息
   permission_delete_own_messages: 刪除自己的訊息
   permission_export_wiki_pages: 匯出 wiki 頁面
-  permission_manage_subtasks: 管理子工作項目
+  permission_manage_subtasks: 管理子任務
   
   project_module_issue_tracking: 項目追蹤
   project_module_time_tracking: 工時追蹤
@@ -532,6 +545,9 @@
   label_issues_by: "項目按 %{value} 分組顯示"
   label_issue_added: 項目已新增
   label_issue_updated: 項目已更新
+  label_issue_note_added: 筆記已新增
+  label_issue_status_updated: 狀態已更新
+  label_issue_priority_updated: 優先權已更新
   label_document: 文件
   label_document_new: 建立新文件
   label_document_plural: 文件
@@ -540,6 +556,8 @@
   label_role_plural: 角色
   label_role_new: 建立新角色
   label_role_and_permissions: 角色與權限
+  label_role_anonymous: 匿名者
+  label_role_non_member: 非會員
   label_member: 成員
   label_member_new: 建立新成員
   label_member_plural: 成員
@@ -618,6 +636,7 @@
   label_news_latest: 最近新聞
   label_news_view_all: 檢視全部的新聞
   label_news_added: 新聞已新增
+  label_news_comment_added: 回應已加入新聞
   label_settings: 設定
   label_overview: 概觀
   label_version: 版本
@@ -664,18 +683,19 @@
   label_last_changes: "最近 %{count} 個變更"
   label_change_view_all: 檢視全部的變更
   label_personalize_page: 自訂版面
-  label_comment: 註解
-  label_comment_plural: 註解
+  label_comment: 回應
+  label_comment_plural: 回應
   label_x_comments:
-    zero: 無註解
-    one: 1 個註解
-    other: "%{count} 個註解"
-  label_comment_add: 加入新註解
-  label_comment_added: 新註解已加入
-  label_comment_delete: 刪除註解
+    zero: 無回應
+    one: 1 個回應
+    other: "%{count} 個回應"
+  label_comment_add: 加入新回應
+  label_comment_added: 新回應已加入
+  label_comment_delete: 刪除回應
   label_query: 自訂查詢
   label_query_plural: 自訂查詢
   label_query_new: 建立新查詢
+  label_my_queries: 我的自訂查詢
   label_filter_add: 加入新篩選條件
   label_filter_plural: 篩選條件
   label_equals: 等於
@@ -701,26 +721,26 @@
   label_contains: 包含
   label_not_contains: 不包含
   label_day_plural: 天
-  label_repository: 版本控管
-  label_repository_plural: 版本控管
+  label_repository: 儲存機制
+  label_repository_plural: 儲存機制清單
   label_browse: 瀏覽
   label_modification: "%{count} 變更"
   label_modification_plural: "%{count} 變更"
   label_branch: 分支
   label_tag: 標籤 
-  label_revision: 版次
-  label_revision_plural: 版次清單
-  label_revision_id: "版次 %{value}"
-  label_associated_revisions: 相關版次
+  label_revision: 修訂版
+  label_revision_plural: 修訂版清單
+  label_revision_id: "修訂版 %{value}"
+  label_associated_revisions: 關聯的修訂版
   label_added: 已新增
   label_modified: 已修改
   label_copied: 已複製
   label_renamed: 已重新命名
   label_deleted: 已刪除
-  label_latest_revision: 最新版次
-  label_latest_revision_plural: 最近版次清單
-  label_view_revisions: 檢視版次清單
-  label_view_all_revisions: 檢視全部的版次清單
+  label_latest_revision: 最新的修訂版
+  label_latest_revision_plural: 最新的修訂版清單
+  label_view_revisions: 檢視修訂版清單
+  label_view_all_revisions: 檢視所有的的修訂版清單
   label_max_size: 最大長度
   label_sort_highest: 移動至開頭
   label_sort_higher: 往上移動
@@ -752,8 +772,8 @@
   label_time_tracking: 工時追蹤
   label_change_plural: 變更
   label_statistics: 統計資訊
-  label_commits_per_month: 依月份統計送交次數
-  label_commits_per_author: 依作者統計送交次數
+  label_commits_per_month: 依月份統計認可
+  label_commits_per_author: 依作者統計認可
   label_view_diff: 檢視差異
   label_diff_inline: 直列
   label_diff_side_by_side: 並排
@@ -813,7 +833,8 @@
   label_changeset_plural: 變更集清單
   label_default_columns: 預設欄位清單
   label_no_change_option: (維持不變)
-  label_bulk_edit_selected_issues: 編輯選定的項目
+  label_bulk_edit_selected_issues: 大量編輯選取的項目
+  label_bulk_edit_selected_time_entries: 大量編輯選取的工時項目
   label_theme: 畫面主題
   label_default: 預設
   label_search_titles_only: 僅搜尋標題
@@ -871,16 +892,24 @@
   label_missing_api_access_key: 找不到 API 存取金鑰
   label_api_access_key_created_on: "API 存取金鑰建立於 %{value} 之前"
   label_profile: 配置概況
-  label_subtask_plural: 子工作項目
+  label_subtask_plural: 子任務
   label_project_copy_notifications: 在複製專案的過程中，傳送通知郵件
   label_principal_search: "搜尋用戶或群組："
   label_user_search: "搜尋用戶："
+  label_additional_workflow_transitions_for_author: 用戶為作者時額外允許的流程轉換
+  label_additional_workflow_transitions_for_assignee: 用戶為被指定者時額外允許的流程轉換
+  label_issues_visibility_all: 所有項目
+  label_issues_visibility_public: 所有非私人項目
+  label_issues_visibility_own: 使用者所建立的或被指派的項目
+  label_git_report_last_commit: 報告最後認可的文件和目錄
 
   button_login: 登入
   button_submit: 送出
   button_save: 儲存
   button_check_all: 全選
   button_uncheck_all: 全不選
+  button_collapse_all: 全部摺疊
+  button_expand_all: 全部展開
   button_delete: 刪除
   button_create: 建立
   button_create_and_continue: 繼續建立
@@ -940,6 +969,7 @@
   text_are_you_sure: 確定執行？
   text_are_you_sure_with_children: "確定刪除此工作項目及其子項目？"
   text_journal_changed: "%{label} 從 %{old} 變更為 %{new}"
+  text_journal_changed_no_detail: "%{label} 已更新"
   text_journal_set_to: "%{label} 設定為 %{value}"
   text_journal_deleted: "%{label} 已刪除 (%{old})"
   text_journal_added: "%{label} %{value} 已新增"
@@ -954,7 +984,7 @@
   text_unallowed_characters: 不允許的字元
   text_comma_separated: 可輸入多個值（須以逗號分隔）。
   text_line_separated: 可輸入多個值（須以換行符號分隔，即每列只能輸入一個值）。
-  text_issues_ref_in_commit_messages: 送交訊息中參照(或修正)項目之關鍵字
+  text_issues_ref_in_commit_messages: 認可訊息中參照(或修正)項目之關鍵字
   text_issue_added: "項目 %{id} 已被 %{author} 通報。"
   text_issue_updated: "項目 %{id} 已被 %{author} 更新。"
   text_wiki_destroy_confirmation: 您確定要刪除這個 wiki 和其中的所有內容？
@@ -967,6 +997,8 @@
   text_status_changed_by_changeset: "已套用至變更集 %{value}."
   text_time_logged_by_changeset: "紀錄於變更集 %{value}."
   text_issues_destroy_confirmation: '確定刪除已選擇的項目？'
+  text_issues_destroy_descendants_confirmation: "這麼做將會一併刪除 %{count} 子任務。"
+  text_time_entries_destroy_confirmation: 您確定要刪除所選擇的工時紀錄？
   text_select_project_modules: '選擇此專案可使用之模組：'
   text_default_administrator_account_changed: 已變更預設管理員帳號內容
   text_file_repository_writable: 可寫入附加檔案目錄
@@ -980,7 +1012,7 @@
   text_enumeration_destroy_question: "目前有 %{count} 個物件使用此列舉值。"
   text_enumeration_category_reassign_to: '重新設定其列舉值為：'
   text_email_delivery_not_configured: "您尚未設定電子郵件傳送方式，因此提醒選項已被停用。\n請在 config/configuration.yml 中設定 SMTP 之後，重新啟動 Redmine，以啟用電子郵件提醒選項。"
-  text_repository_usernames_mapping: "選擇或更新 Redmine 使用者與版本庫使用者之對應關係。\n版本庫中之使用者帳號或電子郵件信箱，與 Redmine 設定相同者，將自動產生對應關係。"
+  text_repository_usernames_mapping: "選擇或更新 Redmine 使用者與儲存機制紀錄使用者之對應關係。\n儲存機制中之使用者帳號或電子郵件信箱，與 Redmine 設定相同者，將自動產生對應關係。"
   text_diff_truncated: '... 這份差異已被截短以符合顯示行數之最大值'
   text_custom_field_possible_values_info: '一列輸入一個值'
   text_wiki_page_destroy_question: "此頁面包含 %{descendants} 個子頁面及延伸頁面。 請選擇您想要的動作?"
@@ -990,7 +1022,15 @@
   text_own_membership_delete_confirmation: "您在專案中，所擁有的部分或全部權限即將被移除，在這之後可能無法再次編輯此專案。\n您確定要繼續執行這個動作？"
   text_zoom_in: 放大
   text_zoom_out: 縮小
-  
+  text_warn_on_leaving_unsaved: "若您離開這個頁面，此頁面所包含的未儲存資料將會遺失。"
+  text_scm_path_encoding_note: "預設: UTF-8"
+  text_git_repository_note: "純(Bare)儲存機制與本機儲存機制 (e.g. /gitrepo, c:\gitrepo)"
+  text_mercurial_repository_note: "本機儲存機制 (e.g. /hgrepo, c:\hgrepo)"
+  text_scm_command: 命令
+  text_scm_command_version: 版本
+  text_scm_config: 您可以在 config/configuration.yml 中設定 SCM 命令。請在編輯該檔案之後重新啟動 Redmine 應用程式。
+  text_scm_command_not_available: SCM 命令無法使用。請檢查管理面板中的設定。
+
   default_role_manager: 管理人員
   default_role_developer: 開發人員
   default_role_reporter: 報告人員
