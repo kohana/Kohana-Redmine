@@ -16,7 +16,10 @@
     abbr_day_names: [v., h., k., sze., cs., p., szo.]
     month_names: [~, január, február, március, április, május, június, július, augusztus, szeptember, október, november, december]
     abbr_month_names: [~, jan., febr., márc., ápr., máj., jún., júl., aug., szept., okt., nov., dec.]
-    order: [ :year, :month, :day ]
+    order:
+      - :year
+      - :month
+      - :day
 
   time:
     formats:
@@ -155,7 +158,7 @@
   general_csv_separator: ','
   general_csv_decimal_separator: '.'
   general_csv_encoding: ISO-8859-2
-  general_pdf_encoding: ISO-8859-2
+  general_pdf_encoding: UTF-8
   general_first_day_of_week: '1'
   
   notice_account_updated: A fiók adatai sikeresen frissítve.
@@ -751,7 +754,6 @@
   text_email_delivery_not_configured: "Az E-mail küldés nincs konfigurálva, és az értesítések ki vannak kapcsolva.\nÁllítsd be az SMTP szervert a config/configuration.yml fájlban és indítsd újra az alkalmazást, hogy érvénybe lépjen."
   field_parent_title: Szülő oldal
   label_issue_watchers: Megfigyelők
-  setting_commit_logs_encoding: Commit üzenetek kódlapja
   button_quote: Hozzászólás / Idézet
   setting_sequential_project_identifiers: Szekvenciális projekt azonosítók generálása
   notice_unable_delete_version: A verziót nem lehet törölni
@@ -931,27 +933,65 @@
   text_zoom_out: Kicsinyít
   text_zoom_in: Nagyít
   notice_unable_delete_time_entry: Az időrögzítés nem törölhető
-  label_overall_spent_time: Összes rászánt idő
-  field_time_entries: Log time
+  label_overall_spent_time: Összes ráfordított idő
+  field_time_entries: Idő rögzítés
   project_module_gantt: Gantt
-  project_module_calendar: Calendar
-  button_edit_associated_wikipage: "Edit associated Wiki page: %{page_title}"
-  text_are_you_sure_with_children: Delete issue and all child issues?
-  field_text: Text field
-  label_user_mail_option_only_owner: Only for things I am the owner of
-  setting_default_notification_option: Default notification option
-  label_user_mail_option_only_my_events: Only for things I watch or I'm involved in
-  label_user_mail_option_only_assigned: Only for things I am assigned to
-  label_user_mail_option_none: No events
-  field_member_of_group: Assignee's group
-  field_assigned_to_role: Assignee's role
-  notice_not_authorized_archived_project: The project you're trying to access has been archived.
-  label_principal_search: "Search for user or group:"
-  label_user_search: "Search for user:"
-  field_visible: Visible
-  setting_emails_header: Emails header
-  setting_commit_logtime_activity_id: Activity for logged time
-  text_time_logged_by_changeset: Applied in changeset %{value}.
-  setting_commit_logtime_enabled: Enable time logging
-  notice_gantt_chart_truncated: The chart was truncated because it exceeds the maximum number of items that can be displayed (%{max})
-  setting_gantt_items_limit: Maximum number of items displayed on the gantt chart
+  project_module_calendar: Naptár
+  button_edit_associated_wikipage: "Hozzárendelt Wiki oldal szerkesztése: %{page_title}"
+  text_are_you_sure_with_children: A feladat törlése az összes alfeladattal együtt?
+  field_text: Szöveg mező
+  label_user_mail_option_only_owner: Csak arról, aminek én vagyok a tulajdonosa
+  setting_default_notification_option: Alapértelmezett értesítési beállítások
+  label_user_mail_option_only_my_events: Csak az általam megfigyelt dolgokról vagy amiben részt veszek
+  label_user_mail_option_only_assigned: Csak a hozzámrendelt dolgokról
+  label_user_mail_option_none: Semilyen eseményről
+  field_member_of_group: Hozzárendelt csoport
+  field_assigned_to_role: Hozzárendelt szerepkör
+  notice_not_authorized_archived_project: A projekt, amihez hozzá szeretnél férni archiválva lett.
+  label_principal_search: "Felhasználó vagy csoport keresése:"
+  label_user_search: "Felhasználó keresése:"
+  field_visible: Látható
+  setting_emails_header: Emailek fejléce
+  setting_commit_logtime_activity_id: A rögzített időhöz tartozó tevékenység
+  text_time_logged_by_changeset: Alkalmazva a %{value} changeset-ben.
+  setting_commit_logtime_enabled: Időrögzítés engedélyezése
+  notice_gantt_chart_truncated: A diagram le lett vágva, mert elérte a maximálisan megjeleníthető elemek számát (%{max})
+  setting_gantt_items_limit: A gantt diagrammon megjeleníthető maximális elemek száma
+  field_warn_on_leaving_unsaved: Figyelmeztessen, nem mentett módosításokat tartalmazó oldal elhagyásakor
+  text_warn_on_leaving_unsaved: A jelenlegi oldal nem mentett módosításokat tartalmaz, ami elvész, ha elhagyja az oldalt.
+  label_my_queries: Egyéni lekérdezéseim
+  text_journal_changed_no_detail: "%{label} módosítva"
+  label_news_comment_added: Megjegyzés hozzáadva a hírhez
+  button_expand_all: Mindet kibont
+  button_collapse_all: Mindet összecsuk
+  label_additional_workflow_transitions_for_assignee: További átmenetek engedélyezettek, ha a felhasználó a hozzárendelt
+  label_additional_workflow_transitions_for_author: További átmenetek engedélyezettek, ha a felhasználó a szerző
+  label_bulk_edit_selected_time_entries: A kiválasztott idő bejegyzések csoportos szerkesztése
+  text_time_entries_destroy_confirmation: Biztos benne, hogy törölni szeretné a kiválasztott idő bejegyzés(eke)t?
+  label_role_anonymous: Anonymous
+  label_role_non_member: Nem tag
+  label_issue_note_added: Jegyzet hozzáadva
+  label_issue_status_updated: Állapot módosítva
+  label_issue_priority_updated: Prioritás módosítva
+  label_issues_visibility_own: A felhasználó által létrehozott vagy hozzárendelt feladatok
+  field_issues_visibility: Feladatok láthatósága
+  label_issues_visibility_all: Minden feladat
+  permission_set_own_issues_private: Saját feladatok beállítása nyilvánosra vagy privátra
+  field_is_private: Privát
+  permission_set_issues_private: Feladatok beállítása nyilvánosra vagy privátra
+  label_issues_visibility_public: Minden nem privát feladat
+  text_issues_destroy_descendants_confirmation: Ezzel törölni fog %{count} alfeladatot is.
+  field_commit_logs_encoding: Commit üzenetek kódlapja
+  field_scm_path_encoding: Elérési útvonal kódlapja
+  text_scm_path_encoding_note: "Alapértelmezett: UTF-8"
+  field_path_to_repository: A repository elérési útja
+  field_root_directory: Gyökér könyvtár
+  field_cvs_module: Modul
+  field_cvsroot: CVSROOT
+  text_git_repository_note: Bare and local repository (e.g. /gitrepo, c:\gitrepo)
+  text_mercurial_repository_note: Helyi repository (e.g. /hgrepo, c:\hgrepo)
+  text_scm_command: Parancs
+  text_scm_command_version: Verzió
+  label_git_report_last_commit: Report last commit for files and directories
+  text_scm_config: You can configure your scm commands in config/configuration.yml. Please restart the application after editing it.
+  text_scm_command_not_available: Scm command is not available. Please check settings on the administration panel.

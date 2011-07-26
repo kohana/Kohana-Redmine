@@ -1,5 +1,5 @@
-# redMine - project management software
-# Copyright (C) 2006  Jean-Philippe Lang
+# Redmine - project management software
+# Copyright (C) 2006-2011  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -32,11 +32,15 @@ class Journal < ActiveRecord::Base
                 :url => Proc.new {|o| {:controller => 'issues', :action => 'show', :id => o.issue.id, :anchor => "change-#{o.id}"}}
 
   acts_as_activity_provider :type => 'issues',
-                            :permission => :view_issues,
                             :author_key => :user_id,
                             :find_options => {:include => [{:issue => :project}, :details, :user],
                                               :conditions => "#{Journal.table_name}.journalized_type = 'Issue' AND" +
                                                              " (#{JournalDetail.table_name}.prop_key = 'status_id' OR #{Journal.table_name}.notes <> '')"}
+  
+  named_scope :visible, lambda {|*args| {
+    :include => {:issue => :project},
+    :conditions => Issue.visible_condition(args.shift || User.current, *args)
+  }}
   
   def save(*args)
     # Do not save an empty journal
@@ -72,5 +76,13 @@ class Journal < ActiveRecord::Base
     s << ' has-notes' unless notes.blank?
     s << ' has-details' unless details.blank?
     s
+  end
+  
+  def notify?
+    @notify != false
+  end
+  
+  def notify=(arg)
+    @notify = arg
   end
 end

@@ -1,5 +1,5 @@
-# redMine - project management software
-# Copyright (C) 2006-2007  Jean-Philippe Lang
+# Redmine - project management software
+# Copyright (C) 2006-2011  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -180,6 +180,41 @@ class ProjectTest < ActiveSupport::TestCase
     assert_nil Member.first(:conditions => {:project_id => @ecookbook.id})
     assert_nil Board.first(:conditions => {:project_id => @ecookbook.id})
     assert_nil Issue.first(:conditions => {:project_id => @ecookbook.id})
+  end
+  
+  def test_destroying_root_projects_should_clear_data
+    Project.roots.each do |root|
+      root.destroy
+    end
+    
+    assert_equal 0, Project.count, "Projects were not deleted: #{Project.all.inspect}"
+    assert_equal 0, Member.count, "Members were not deleted: #{Member.all.inspect}"
+    assert_equal 0, MemberRole.count
+    assert_equal 0, Issue.count
+    assert_equal 0, Journal.count
+    assert_equal 0, JournalDetail.count
+    assert_equal 0, Attachment.count
+    assert_equal 0, EnabledModule.count
+    assert_equal 0, IssueCategory.count
+    assert_equal 0, IssueRelation.count
+    assert_equal 0, Board.count
+    assert_equal 0, Message.count
+    assert_equal 0, News.count
+    assert_equal 0, Query.count(:conditions => "project_id IS NOT NULL")
+    assert_equal 0, Repository.count
+    assert_equal 0, Changeset.count
+    assert_equal 0, Change.count
+    assert_equal 0, Comment.count
+    assert_equal 0, TimeEntry.count
+    assert_equal 0, Version.count
+    assert_equal 0, Watcher.count
+    assert_equal 0, Wiki.count
+    assert_equal 0, WikiPage.count
+    assert_equal 0, WikiContent.count
+    assert_equal 0, WikiContent::Version.count
+    assert_equal 0, Project.connection.select_all("SELECT * FROM projects_trackers").size
+    assert_equal 0, Project.connection.select_all("SELECT * FROM custom_fields_projects").size
+    assert_equal 0, CustomValue.count(:conditions => {:customized_type => ['Project', 'Issue', 'TimeEntry', 'Version']})
   end
   
   def test_move_an_orphan_project_to_a_root_project
@@ -553,6 +588,62 @@ class ProjectTest < ActiveSupport::TestCase
     assert_nil Project.next_identifier
   end
   
+  def test_enabled_module_names
+    with_settings :default_projects_modules => ['issue_tracking', 'repository'] do
+      project = Project.new
+      
+      project.enabled_module_names = %w(issue_tracking news)
+      assert_equal %w(issue_tracking news), project.enabled_module_names.sort
+    end
+  end
+
+  context "enabled_modules" do
+    setup do
+      @project = Project.find(1)
+    end
+
+    should "define module by names and preserve ids" do
+      # Remove one module
+      modules = @project.enabled_modules.slice(0..-2)
+      assert modules.any?
+      assert_difference 'EnabledModule.count', -1 do
+        @project.enabled_module_names = modules.collect(&:name)
+      end
+      @project.reload
+      # Ids should be preserved
+      assert_equal @project.enabled_module_ids.sort, modules.collect(&:id).sort
+    end
+
+    should "enable a module" do
+      @project.enabled_module_names = []
+      @project.reload
+      assert_equal [], @project.enabled_module_names
+      #with string
+      @project.enable_module!("issue_tracking")
+      assert_equal ["issue_tracking"], @project.enabled_module_names
+      #with symbol
+      @project.enable_module!(:gantt)
+      assert_equal ["issue_tracking", "gantt"], @project.enabled_module_names
+      #don't add a module twice
+      @project.enable_module!("issue_tracking")
+      assert_equal ["issue_tracking", "gantt"], @project.enabled_module_names
+    end
+
+    should "disable a module" do
+      #with string
+      assert @project.enabled_module_names.include?("issue_tracking")
+      @project.disable_module!("issue_tracking")
+      assert ! @project.reload.enabled_module_names.include?("issue_tracking")
+      #with symbol
+      assert @project.enabled_module_names.include?("gantt")
+      @project.disable_module!(:gantt)
+      assert ! @project.reload.enabled_module_names.include?("gantt")
+      #with EnabledModule object
+      first_module = @project.enabled_modules.first
+      @project.disable_module!(first_module)
+      assert ! @project.reload.enabled_module_names.include?(first_module.name)
+    end
+  end
 
   def test_enabled_module_names_should_not_recreate_enabled_modules
     project = Project.find(1)

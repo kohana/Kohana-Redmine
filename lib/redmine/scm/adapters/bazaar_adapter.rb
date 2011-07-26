@@ -1,16 +1,16 @@
-# redMine - project management software
-# Copyright (C) 2006-2007  Jean-Philippe Lang
+# Redmine - project management software
+# Copyright (C) 2006-2011  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
 # as published by the Free Software Foundation; either version 2
 # of the License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -19,15 +19,47 @@ require 'redmine/scm/adapters/abstract_adapter'
 
 module Redmine
   module Scm
-    module Adapters    
+    module Adapters
       class BazaarAdapter < AbstractAdapter
-      
+
         # Bazaar executable name
-        BZR_BIN = "bzr"
-        
+        BZR_BIN = Redmine::Configuration['scm_bazaar_command'] || "bzr"
+
+        class << self
+          def client_command
+            @@bin    ||= BZR_BIN
+          end
+
+          def sq_bin
+            @@sq_bin ||= shell_quote_command
+          end
+
+          def client_version
+            @@client_version ||= (scm_command_version || [])
+          end
+
+          def client_available
+            !client_version.empty?
+          end
+
+          def scm_command_version
+            scm_version = scm_version_from_command_line.dup
+            if scm_version.respond_to?(:force_encoding)
+              scm_version.force_encoding('ASCII-8BIT')
+            end
+            if m = scm_version.match(%r{\A(.*?)((\d+\.)+\d+)})
+              m[2].scan(%r{\d+}).collect(&:to_i)
+            end
+          end
+
+          def scm_version_from_command_line
+            shellout("#{sq_bin} --version") { |io| io.read }.to_s
+          end
+        end
+
         # Get info about the repository
         def info
-          cmd = "#{BZR_BIN} revno #{target('')}"
+          cmd = "#{self.class.sq_bin} revno #{target('')}"
           info = nil
           shellout(cmd) do |io|
             if io.read =~ %r{^(\d+)\r?$}
@@ -43,15 +75,15 @@ module Redmine
         rescue CommandFailed
           return nil
         end
-        
+
         # Returns an Entries collection
         # or nil if the given path doesn't exist in the repository
-        def entries(path=nil, identifier=nil)
+        def entries(path=nil, identifier=nil, options={})
           path ||= ''
           entries = Entries.new
-          cmd = "#{BZR_BIN} ls -v --show-ids"
-          identifier = -1 unless identifier && identifier.to_i > 0 
-          cmd << " -r#{identifier.to_i}" 
+          cmd = "#{self.class.sq_bin} ls -v --show-ids"
+          identifier = -1 unless identifier && identifier.to_i > 0
+          cmd << " -r#{identifier.to_i}"
           cmd << " #{target(path)}"
           shellout(cmd) do |io|
             prefix = "#{url}/#{path}".gsub('\\', '/')
@@ -71,13 +103,13 @@ module Redmine
           logger.debug("Found #{entries.size} entries in the repository for #{target(path)}") if logger && logger.debug?
           entries.sort_by_name
         end
-    
+
         def revisions(path=nil, identifier_from=nil, identifier_to=nil, options={})
           path ||= ''
           identifier_from = (identifier_from and identifier_from.to_i > 0) ? identifier_from.to_i : 'last:1'
           identifier_to = (identifier_to and identifier_to.to_i > 0) ? identifier_to.to_i : 1
           revisions = Revisions.new
-          cmd = "#{BZR_BIN} log -v --show-ids -r#{identifier_to}..#{identifier_from} #{target(path)}"
+          cmd = "#{self.class.sq_bin} log -v --show-ids -r#{identifier_to}..#{identifier_from} #{target(path)}"
           shellout(cmd) do |io|
             revision = nil
             parsing = nil
@@ -88,7 +120,6 @@ module Redmine
                 parsing = nil
               else
                 next unless revision
-                
                 if line =~ /^revno: (\d+)($|\s\[merge\]$)/
                   revision.identifier = $1.to_i
                 elsif line =~ /^committer: (.+)$/
@@ -132,18 +163,18 @@ module Redmine
           return nil if $? && $?.exitstatus != 0
           revisions
         end
-        
+
         def diff(path, identifier_from, identifier_to=nil)
           path ||= ''
           if identifier_to
-            identifier_to = identifier_to.to_i 
+            identifier_to = identifier_to.to_i
           else
             identifier_to = identifier_from.to_i - 1
           end
           if identifier_from
             identifier_from = identifier_from.to_i
           end
-          cmd = "#{BZR_BIN} diff -r#{identifier_to}..#{identifier_from} #{target(path)}"
+          cmd = "#{self.class.sq_bin} diff -r#{identifier_to}..#{identifier_from} #{target(path)}"
           diff = []
           shellout(cmd) do |io|
             io.each_line do |line|
@@ -153,9 +184,9 @@ module Redmine
           #return nil if $? && $?.exitstatus != 0
           diff
         end
-        
+
         def cat(path, identifier=nil)
-          cmd = "#{BZR_BIN} cat"
+          cmd = "#{self.class.sq_bin} cat"
           cmd << " -r#{identifier.to_i}" if identifier && identifier.to_i > 0
           cmd << " #{target(path)}"
           cat = nil
@@ -166,9 +197,9 @@ module Redmine
           return nil if $? && $?.exitstatus != 0
           cat
         end
-        
+
         def annotate(path, identifier=nil)
-          cmd = "#{BZR_BIN} annotate --all"
+          cmd = "#{self.class.sq_bin} annotate --all"
           cmd << " -r#{identifier.to_i}" if identifier && identifier.to_i > 0
           cmd << " #{target(path)}"
           blame = Annotate.new
@@ -177,7 +208,13 @@ module Redmine
             identifier = nil
             io.each_line do |line|
               next unless line =~ %r{^(\d+) ([^|]+)\| (.*)$}
-              blame.add_line($3.rstrip, Revision.new(:identifier => $1.to_i, :author => $2.strip))
+              rev = $1
+              blame.add_line($3.rstrip,
+                 Revision.new(
+                  :identifier => rev,
+                  :revision   => rev,
+                  :author     => $2.strip
+                  ))
             end
           end
           return nil if $? && $?.exitstatus != 0

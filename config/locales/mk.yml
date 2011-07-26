@@ -17,7 +17,10 @@ mk:
     month_names: [~, јануари, февруари, март, април, мај, јуни, јули, август, септември, октомври, ноември, декември]
     abbr_month_names: [~, јан, фев, мар, апр, мај, јун, јул, авг, сеп, окт, ное, дек]
     # Used in date_select and datime_select.
-    order: [ :day, :month, :year ]
+    order:
+      - :day
+      - :month
+      - :year
 
   time:
     formats:
@@ -266,7 +269,7 @@ mk:
   field_attr_mail: Email attribute
   field_onthefly: Моментално (On-the-fly) креирање на корисници
   field_start_date: Почеток
-  field_done_ratio: % Завршено
+  field_done_ratio: "% Завршено"
   field_auth_source: Режим на автентикација
   field_hide_mail: Криј ја мојата адреса на е-пошта
   field_comments: Коментар
@@ -324,7 +327,6 @@ mk:
   setting_cross_project_issue_relations: Дозволи релации на задачи меѓу проекти
   setting_issue_list_default_columns: Default columns displayed on the issue list
   setting_repositories_encodings: Repositories encodings
-  setting_commit_logs_encoding: Commit messages encoding
   setting_emails_footer: Emails footer
   setting_protocol: Протокол
   setting_per_page_options: Objects per page options
@@ -936,3 +938,41 @@ mk:
   setting_commit_logtime_enabled: Enable time logging
   notice_gantt_chart_truncated: The chart was truncated because it exceeds the maximum number of items that can be displayed (%{max})
   setting_gantt_items_limit: Maximum number of items displayed on the gantt chart
+  field_warn_on_leaving_unsaved: Warn me when leaving a page with unsaved text
+  text_warn_on_leaving_unsaved: The current page contains unsaved text that will be lost if you leave this page.
+  label_my_queries: My custom queries
+  text_journal_changed_no_detail: "%{label} updated"
+  label_news_comment_added: Comment added to a news
+  button_expand_all: Expand all
+  button_collapse_all: Collapse all
+  label_additional_workflow_transitions_for_assignee: Additional transitions allowed when the user is the assignee
+  label_additional_workflow_transitions_for_author: Additional transitions allowed when the user is the author
+  label_bulk_edit_selected_time_entries: Bulk edit selected time entries
+  text_time_entries_destroy_confirmation: Are you sure you want to delete the selected time entr(y/ies)?
+  label_role_anonymous: Anonymous
+  label_role_non_member: Non member
+  label_issue_note_added: Note added
+  label_issue_status_updated: Status updated
+  label_issue_priority_updated: Priority updated
+  label_issues_visibility_own: Issues created by or assigned to the user
+  field_issues_visibility: Issues visibility
+  label_issues_visibility_all: All issues
+  permission_set_own_issues_private: Set own issues public or private
+  field_is_private: Private
+  permission_set_issues_private: Set issues public or private
+  label_issues_visibility_public: All non private issues
+  text_issues_destroy_descendants_confirmation: This will also delete %{count} subtask(s).
+  field_commit_logs_encoding: Commit messages encoding
+  field_scm_path_encoding: Path encoding
+  text_scm_path_encoding_note: "Default: UTF-8"
+  field_path_to_repository: Path to repository
+  field_root_directory: Root directory
+  field_cvs_module: Module
+  field_cvsroot: CVSROOT
+  text_git_repository_note: Bare and local repository (e.g. /gitrepo, c:\gitrepo)
+  text_mercurial_repository_note: Local repository (e.g. /hgrepo, c:\hgrepo)
+  text_scm_command: Command
+  text_scm_command_version: Version
+  label_git_report_last_commit: Report last commit for files and directories
+  text_scm_config: You can configure your scm commands in config/configuration.yml. Please restart the application after editing it.
+  text_scm_command_not_available: Scm command is not available. Please check settings on the administration panel.

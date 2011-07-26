@@ -1,5 +1,5 @@
 # Redmine - project management software
-# Copyright (C) 2006-2010  Jean-Philippe Lang
+# Copyright (C) 2006-2011  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -18,10 +18,12 @@
 class TimelogController < ApplicationController
   menu_item :issues
   before_filter :find_project, :only => [:new, :create]
-  before_filter :find_time_entry, :only => [:show, :edit, :update, :destroy]
+  before_filter :find_time_entry, :only => [:show, :edit, :update]
+  before_filter :find_time_entries, :only => [:bulk_edit, :bulk_update, :destroy]
   before_filter :authorize, :except => [:index]
   before_filter :find_optional_project, :only => [:index]
-  accept_key_auth :index, :show, :create, :update, :destroy
+  accept_rss_auth :index
+  accept_api_auth :index, :show, :create, :update, :destroy
   
   helper :sort
   include SortHelper
@@ -40,60 +42,56 @@ class TimelogController < ApplicationController
                 'hours' => 'hours'
     
     cond = ARCondition.new
-    if @project.nil?
-      cond << Project.allowed_to_condition(User.current, :view_time_entries)
-    elsif @issue.nil?
-      cond << @project.project_condition(Setting.display_subprojects_issues?)
-    else
+    if @issue
       cond << "#{Issue.table_name}.root_id = #{@issue.root_id} AND #{Issue.table_name}.lft >= #{@issue.lft} AND #{Issue.table_name}.rgt <= #{@issue.rgt}"
+    elsif @project
+      cond << @project.project_condition(Setting.display_subprojects_issues?)
     end
     
     retrieve_date_range
     cond << ['spent_on BETWEEN ? AND ?', @from, @to]
 
-    TimeEntry.visible_by(User.current) do
-      respond_to do |format|
-        format.html {
-          # Paginate results
-          @entry_count = TimeEntry.count(:include => [:project, :issue], :conditions => cond.conditions)
-          @entry_pages = Paginator.new self, @entry_count, per_page_option, params['page']
-          @entries = TimeEntry.find(:all, 
-                                    :include => [:project, :activity, :user, {:issue => :tracker}],
-                                    :conditions => cond.conditions,
-                                    :order => sort_clause,
-                                    :limit  =>  @entry_pages.items_per_page,
-                                    :offset =>  @entry_pages.current.offset)
-          @total_hours = TimeEntry.sum(:hours, :include => [:project, :issue], :conditions => cond.conditions).to_f
+    respond_to do |format|
+      format.html {
+        # Paginate results
+        @entry_count = TimeEntry.visible.count(:include => [:project, :issue], :conditions => cond.conditions)
+        @entry_pages = Paginator.new self, @entry_count, per_page_option, params['page']
+        @entries = TimeEntry.visible.find(:all, 
+                                  :include => [:project, :activity, :user, {:issue => :tracker}],
+                                  :conditions => cond.conditions,
+                                  :order => sort_clause,
+                                  :limit  =>  @entry_pages.items_per_page,
+                                  :offset =>  @entry_pages.current.offset)
+        @total_hours = TimeEntry.visible.sum(:hours, :include => [:project, :issue], :conditions => cond.conditions).to_f
 
-          render :layout => !request.xhr?
-        }
-        format.api  {
-          @entry_count = TimeEntry.count(:include => [:project, :issue], :conditions => cond.conditions)
-          @entry_pages = Paginator.new self, @entry_count, per_page_option, params['page']
-          @entries = TimeEntry.find(:all, 
-                                    :include => [:project, :activity, :user, {:issue => :tracker}],
-                                    :conditions => cond.conditions,
-                                    :order => sort_clause,
-                                    :limit  =>  @entry_pages.items_per_page,
-                                    :offset =>  @entry_pages.current.offset)
-        }
-        format.atom {
-          entries = TimeEntry.find(:all,
-                                   :include => [:project, :activity, :user, {:issue => :tracker}],
-                                   :conditions => cond.conditions,
-                                   :order => "#{TimeEntry.table_name}.created_on DESC",
-                                   :limit => Setting.feeds_limit.to_i)
-          render_feed(entries, :title => l(:label_spent_time))
-        }
-        format.csv {
-          # Export all entries
-          @entries = TimeEntry.find(:all, 
-                                    :include => [:project, :activity, :user, {:issue => [:tracker, :assigned_to, :priority]}],
-                                    :conditions => cond.conditions,
-                                    :order => sort_clause)
-          send_data(entries_to_csv(@entries), :type => 'text/csv; header=present', :filename => 'timelog.csv')
-        }
-      end
+        render :layout => !request.xhr?
+      }
+      format.api  {
+        @entry_count = TimeEntry.visible.count(:include => [:project, :issue], :conditions => cond.conditions)
+        @offset, @limit = api_offset_and_limit
+        @entries = TimeEntry.visible.find(:all, 
+                                  :include => [:project, :activity, :user, {:issue => :tracker}],
+                                  :conditions => cond.conditions,
+                                  :order => sort_clause,
+                                  :limit  => @limit,
+                                  :offset => @offset)
+      }
+      format.atom {
+        entries = TimeEntry.visible.find(:all,
+                                 :include => [:project, :activity, :user, {:issue => :tracker}],
+                                 :conditions => cond.conditions,
+                                 :order => "#{TimeEntry.table_name}.created_on DESC",
+                                 :limit => Setting.feeds_limit.to_i)
+        render_feed(entries, :title => l(:label_spent_time))
+      }
+      format.csv {
+        # Export all entries
+        @entries = TimeEntry.visible.find(:all, 
+                                  :include => [:project, :activity, :user, {:issue => [:tracker, :assigned_to, :priority]}],
+                                  :conditions => cond.conditions,
+                                  :order => sort_clause)
+        send_data(entries_to_csv(@entries), :type => 'text/csv; header=present', :filename => 'timelog.csv')
+      }
     end
   end
   
@@ -164,27 +162,55 @@ class TimelogController < ApplicationController
     end    
   end
 
-  verify :method => :delete, :only => :destroy, :render => {:nothing => true, :status => :method_not_allowed }
-  def destroy
-    if @time_entry.destroy && @time_entry.destroyed?
-      respond_to do |format|
-        format.html {
-          flash[:notice] = l(:notice_successful_delete)
-          redirect_to :back
-        }
-        format.api  { head :ok }
-      end
-    else
-      respond_to do |format|
-        format.html {
-          flash[:error] = l(:notice_unable_delete_time_entry)
-          redirect_to :back
-        }
-        format.api  { render_validation_errors(@time_entry) }
+  def bulk_edit
+    @available_activities = TimeEntryActivity.shared.active
+    @custom_fields = TimeEntry.first.available_custom_fields
+  end
+
+  def bulk_update
+    attributes = parse_params_for_bulk_time_entry_attributes(params)
+
+    unsaved_time_entry_ids = []
+    @time_entries.each do |time_entry|
+      time_entry.reload
+      time_entry.attributes = attributes
+      call_hook(:controller_time_entries_bulk_edit_before_save, { :params => params, :time_entry => time_entry })
+      unless time_entry.save
+        # Keep unsaved time_entry ids to display them in flash error
+        unsaved_time_entry_ids << time_entry.id
       end
     end
-  rescue ::ActionController::RedirectBackError
-    redirect_to :action => 'index', :project_id => @time_entry.project
+    set_flash_from_bulk_time_entry_save(@time_entries, unsaved_time_entry_ids)
+    redirect_back_or_default({:controller => 'timelog', :action => 'index', :project_id => @projects.first})
+  end
+
+  verify :method => :delete, :only => :destroy, :render => {:nothing => true, :status => :method_not_allowed }
+  def destroy
+    @time_entries.each do |t| 
+      begin
+        unless t.destroy && t.destroyed?
+          respond_to do |format|
+            format.html {
+              flash[:error] = l(:notice_unable_delete_time_entry)
+              redirect_to :back
+            }
+            format.api  { render_validation_errors(t) }
+          end
+          return
+        end
+      rescue ::ActionController::RedirectBackError
+        redirect_to :action => 'index', :project_id => @projects.first
+        return
+      end
+    end
+
+    respond_to do |format|
+      format.html {
+        flash[:notice] = l(:notice_successful_delete)
+        redirect_back_or_default(:action => 'index', :project_id => @projects.first)
+      }
+      format.api  { head :ok }
+    end
   end
 
 private
@@ -197,6 +223,26 @@ private
     @project = @time_entry.project
   rescue ActiveRecord::RecordNotFound
     render_404
+  end
+
+  def find_time_entries
+    @time_entries = TimeEntry.find_all_by_id(params[:id] || params[:ids])
+    raise ActiveRecord::RecordNotFound if @time_entries.empty?
+    @projects = @time_entries.collect(&:project).compact.uniq
+    @project = @projects.first if @projects.size == 1
+  rescue ActiveRecord::RecordNotFound
+    render_404
+  end
+
+  def set_flash_from_bulk_time_entry_save(time_entries, unsaved_time_entry_ids)
+    if unsaved_time_entry_ids.empty?
+      flash[:notice] = l(:notice_successful_update) unless time_entries.empty?
+    else
+      flash[:error] = l(:notice_failed_to_save_time_entries,
+                        :count => unsaved_time_entry_ids.size,
+                        :total => time_entries.size,
+                        :ids => '#' + unsaved_time_entry_ids.join(', #'))
+    end
   end
 
   def find_project
@@ -269,4 +315,10 @@ private
     @to   ||= (TimeEntry.latest_date_for_project(@project) || Date.today)
   end
 
+  def parse_params_for_bulk_time_entry_attributes(params)
+    attributes = (params[:time_entry] || {}).reject {|k,v| v.blank?}
+    attributes.keys.each {|k| attributes[k] = '' if attributes[k] == 'none'}
+    attributes[:custom_field_values].reject! {|k,v| v.blank?} if attributes[:custom_field_values]
+    attributes
+  end
 end

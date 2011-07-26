@@ -1,5 +1,5 @@
 # Redmine - project management software
-# Copyright (C) 2006-2009  Jean-Philippe Lang
+# Copyright (C) 2006-2011  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -24,7 +24,8 @@ class ProjectsController < ApplicationController
   before_filter :authorize, :except => [ :index, :list, :new, :create, :copy, :archive, :unarchive, :destroy]
   before_filter :authorize_global, :only => [:new, :create]
   before_filter :require_admin, :only => [ :copy, :archive, :unarchive, :destroy ]
-  accept_key_auth :index, :show, :create, :update, :destroy
+  accept_rss_auth :index
+  accept_api_auth :index, :show, :create, :update, :destroy
 
   after_filter :only => [:create, :edit, :update, :archive, :unarchive, :destroy] do |controller|
     if controller.request.post?
@@ -117,7 +118,6 @@ class ProjectsController < ApplicationController
       Mailer.with_deliveries(params[:notifications] == '1') do
         @project = Project.new
         @project.safe_attributes = params[:project]
-        @project.enabled_module_names = params[:enabled_modules]
         if validate_parent_id && @project.copy(@source_project, :only => params[:only])
           @project.set_allowed_parent!(params[:project]['parent_id']) if params[:project].has_key?('parent_id')
           flash[:notice] = l(:notice_successful_create)
@@ -143,7 +143,7 @@ class ProjectsController < ApplicationController
     end
     
     @users_by_role = @project.users_by_role
-    @subprojects = @project.children.visible
+    @subprojects = @project.children.visible.all
     @news = @project.news.find(:all, :limit => 5, :include => [ :author, :project ], :order => "#{News.table_name}.created_on DESC")
     @trackers = @project.rolled_up_trackers
     
@@ -156,11 +156,10 @@ class ProjectsController < ApplicationController
                                             :include => [:project, :status, :tracker],
                                             :conditions => cond)
     
-    TimeEntry.visible_by(User.current) do
-      @total_hours = TimeEntry.sum(:hours, 
-                                   :include => :project,
-                                   :conditions => cond).to_f
+    if User.current.allowed_to?(:view_time_entries, @project)
+      @total_hours = TimeEntry.visible.sum(:hours, :include => :project, :conditions => cond).to_f
     end
+    
     @key = User.current.rss_key
     
     respond_to do |format|

@@ -1,5 +1,7 @@
 syntax: glob
 
+.project
+.loadpath
 config/additional_environment.rb
 config/configuration.yml
 config/database.yml
@@ -10,6 +12,8 @@ db/*.db
 db/*.sqlite3
 db/schema.rb
 files/*
+lib/redmine/scm/adapters/mercurial/redminehelper.pyc
+lib/redmine/scm/adapters/mercurial/redminehelper.pyo
 log/*.log*
 log/mongrel_debug
 public/dispatch.*
@@ -21,3 +25,5 @@ tmp/sockets/*
 tmp/test/*
 vendor/rails
 *.rbc
+.svn/
+.git/

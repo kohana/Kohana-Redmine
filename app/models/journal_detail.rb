@@ -1,5 +1,5 @@
-# redMine - project management software
-# Copyright (C) 2006  Jean-Philippe Lang
+# Redmine - project management software
+# Copyright (C) 2006-2011  Jean-Philippe Lang
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -17,9 +17,22 @@
 
 class JournalDetail < ActiveRecord::Base
   belongs_to :journal
+  before_save :normalize_values
   
-  def before_save
-    self.value = value[0..254] if value && value.is_a?(String)
-    self.old_value = old_value[0..254] if old_value && old_value.is_a?(String)
+  private
+  
+  def normalize_values
+    self.value = normalize(value)
+    self.old_value = normalize(old_value)
+  end
+  
+  def normalize(v)
+    if v == true
+      "1"
+    elsif v == false
+      "0"
+    else
+      v
+    end
   end
 end

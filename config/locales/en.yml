@@ -17,7 +17,10 @@ en:
     month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
     abbr_month_names: [~, Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
     # Used in date_select and datime_select.
-    order: [ :year, :month, :day ]
+    order:
+      - :year
+      - :month
+      - :day
 
   time:
     formats:
@@ -66,11 +69,11 @@ en:
         other: "almost %{count} years"
 
   number:
-    # Default format for numbers
     format:
       separator: "." 
       delimiter: ""
       precision: 3
+
     human:
       format:
         delimiter: ""
@@ -123,7 +126,7 @@ en:
         greater_than_start_date: "must be greater than start date"
         not_same_project: "doesn't belong to the same project"
         circular_dependency: "This relation would create a circular dependency"
-        cant_link_an_issue_with_a_descendant: "An issue can not be linked to one of its subtasks"
+        cant_link_an_issue_with_a_descendant: "An issue cannot be linked to one of its subtasks"
 
   actionview_instancetag_blank_option: Please select
   
@@ -135,7 +138,7 @@ en:
   general_csv_separator: ','
   general_csv_decimal_separator: '.'
   general_csv_encoding: ISO-8859-1
-  general_pdf_encoding: ISO-8859-1
+  general_pdf_encoding: UTF-8
   general_first_day_of_week: '7'
   
   notice_account_updated: Account was successfully updated.
@@ -172,15 +175,15 @@ en:
   error_can_t_load_default_data: "Default configuration could not be loaded: %{value}"
   error_scm_not_found: "The entry or revision was not found in the repository."
   error_scm_command_failed: "An error occurred when trying to access the repository: %{value}"
-  error_scm_annotate: "The entry does not exist or can not be annotated."
+  error_scm_annotate: "The entry does not exist or cannot be annotated."
   error_issue_not_found_in_project: 'The issue was not found or does not belong to this project'
   error_no_tracker_in_project: 'No tracker is associated to this project. Please check the Project settings.'
   error_no_default_issue_status: 'No default issue status is defined. Please check your configuration (Go to "Administration -> Issue statuses").'
   error_can_not_delete_custom_field: Unable to delete custom field
-  error_can_not_delete_tracker: "This tracker contains issues and can't be deleted."
-  error_can_not_remove_role: "This role is in use and can not be deleted."
-  error_can_not_reopen_issue_on_closed_version: 'An issue assigned to a closed version can not be reopened'
-  error_can_not_archive_project: This project can not be archived
+  error_can_not_delete_tracker: "This tracker contains issues and cannot be deleted."
+  error_can_not_remove_role: "This role is in use and cannot be deleted."
+  error_can_not_reopen_issue_on_closed_version: 'An issue assigned to a closed version cannot be reopened'
+  error_can_not_archive_project: This project cannot be archived
   error_issue_done_ratios_not_updated: "Issue done ratios not updated."
   error_workflow_copy_source: 'Please select a source tracker or role'
   error_workflow_copy_target: 'Please select target tracker(s) and role(s)'
@@ -210,8 +213,8 @@ en:
   field_description: Description
   field_summary: Summary
   field_is_required: Required
-  field_firstname: Firstname
-  field_lastname: Lastname
+  field_firstname: First name
+  field_lastname: Last name
   field_mail: Email
   field_filename: File
   field_filesize: Size
@@ -268,7 +271,7 @@ en:
   field_attr_mail: Email attribute
   field_onthefly: On-the-fly user creation
   field_start_date: Start date
-  field_done_ratio: % Done
+  field_done_ratio: "% Done"
   field_auth_source: Authentication mode
   field_hide_mail: Hide my email address
   field_comments: Comment
@@ -303,7 +306,16 @@ en:
   field_assigned_to_role: "Assignee's role"
   field_text: Text field
   field_visible: Visible
-  
+  field_warn_on_leaving_unsaved: "Warn me when leaving a page with unsaved text"
+  field_issues_visibility: Issues visibility
+  field_is_private: Private
+  field_commit_logs_encoding: Commit messages encoding
+  field_scm_path_encoding: Path encoding
+  field_path_to_repository: Path to repository
+  field_root_directory: Root directory
+  field_cvsroot: CVSROOT
+  field_cvs_module: Module
+
   setting_app_title: Application title
   setting_app_subtitle: Application subtitle
   setting_welcome_text: Welcome text
@@ -330,7 +342,6 @@ en:
   setting_cross_project_issue_relations: Allow cross-project issue relations
   setting_issue_list_default_columns: Default columns displayed on the issue list
   setting_repositories_encodings: Repositories encodings
-  setting_commit_logs_encoding: Commit messages encoding
   setting_emails_header: Emails header
   setting_emails_footer: Emails footer
   setting_protocol: Protocol
@@ -375,6 +386,8 @@ en:
   permission_add_issues: Add issues
   permission_edit_issues: Edit issues
   permission_manage_issue_relations: Manage issue relations
+  permission_set_issues_private: Set issues public or private
+  permission_set_own_issues_private: Set own issues public or private
   permission_add_issue_notes: Add notes
   permission_edit_issue_notes: Edit notes
   permission_edit_own_issue_notes: Edit own notes
@@ -409,7 +422,7 @@ en:
   permission_browse_repository: Browse repository
   permission_view_changesets: View changesets
   permission_commit_access: Commit access
-  permission_manage_boards: Manage boards
+  permission_manage_boards: Manage forums
   permission_view_messages: View messages
   permission_add_messages: Post messages
   permission_edit_messages: Edit messages
@@ -426,7 +439,7 @@ en:
   project_module_files: Files
   project_module_wiki: Wiki
   project_module_repository: Repository
-  project_module_boards: Boards
+  project_module_boards: Forums
   project_module_calendar: Calendar
   project_module_gantt: Gantt
   
@@ -450,6 +463,9 @@ en:
   label_issues_by: "Issues by %{value}"
   label_issue_added: Issue added
   label_issue_updated: Issue updated
+  label_issue_note_added: Note added
+  label_issue_status_updated: Status updated
+  label_issue_priority_updated: Priority updated
   label_document: Document
   label_document_new: New document
   label_document_plural: Documents
@@ -458,6 +474,8 @@ en:
   label_role_plural: Roles
   label_role_new: New role
   label_role_and_permissions: Roles and permissions
+  label_role_anonymous: Anonymous
+  label_role_non_member: Non member
   label_member: Member
   label_member_new: New member
   label_member_plural: Members
@@ -536,6 +554,7 @@ en:
   label_news_latest: Latest news
   label_news_view_all: View all news
   label_news_added: News added
+  label_news_comment_added: Comment added to a news
   label_settings: Settings
   label_overview: Overview
   label_version: Version
@@ -594,6 +613,7 @@ en:
   label_query: Custom query
   label_query_plural: Custom queries
   label_query_new: New query
+  label_my_queries: My custom queries
   label_filter_add: Add filter
   label_filter_plural: Filters
   label_equals: is
@@ -732,6 +752,7 @@ en:
   label_default_columns: Default columns
   label_no_change_option: (No change)
   label_bulk_edit_selected_issues: Bulk edit selected issues
+  label_bulk_edit_selected_time_entries: Bulk edit selected time entries
   label_theme: Theme
   label_default: Default
   label_search_titles_only: Search titles only
@@ -793,12 +814,20 @@ en:
   label_project_copy_notifications: Send email notifications during the project copy
   label_principal_search: "Search for user or group:"
   label_user_search: "Search for user:"
-  
+  label_additional_workflow_transitions_for_author: Additional transitions allowed when the user is the author
+  label_additional_workflow_transitions_for_assignee: Additional transitions allowed when the user is the assignee
+  label_issues_visibility_all: All issues
+  label_issues_visibility_public: All non private issues
+  label_issues_visibility_own: Issues created by or assigned to the user
+  label_git_report_last_commit: Report last commit for files and directories
+
   button_login: Login
   button_submit: Submit
   button_save: Save
   button_check_all: Check all
   button_uncheck_all: Uncheck all
+  button_collapse_all: Collapse all
+  button_expand_all: Expand all
   button_delete: Delete
   button_create: Create
   button_create_and_continue: Create and continue
@@ -838,33 +867,34 @@ en:
   button_quote: Quote
   button_duplicate: Duplicate
   button_show: Show
-  
+
   status_active: active
   status_registered: registered
   status_locked: locked
-  
+
   version_status_open: open
   version_status_locked: locked
   version_status_closed: closed
 
   field_active: Active
-  
+
   text_select_mail_notifications: Select actions for which email notifications should be sent.
   text_regexp_info: eg. ^[A-Z0-9]+$
   text_min_max_length_info: 0 means no restriction
-  text_project_destroy_confirmation: Are you sure you want to delete this project and related data ?
+  text_project_destroy_confirmation: Are you sure you want to delete this project and related data?
   text_subprojects_destroy_warning: "Its subproject(s): %{value} will be also deleted."
   text_workflow_edit: Select a role and a tracker to edit the workflow
-  text_are_you_sure: Are you sure ?
+  text_are_you_sure: Are you sure?
   text_are_you_sure_with_children: "Delete issue and all child issues?"
   text_journal_changed: "%{label} changed from %{old} to %{new}"
+  text_journal_changed_no_detail: "%{label} updated"
   text_journal_set_to: "%{label} set to %{value}"
   text_journal_deleted: "%{label} deleted (%{old})"
   text_journal_added: "%{label} %{value} added"
   text_tip_issue_begin_day: issue beginning this day
   text_tip_issue_end_day: issue ending this day
   text_tip_issue_begin_end_day: issue beginning and ending this day
-  text_project_identifier_info: 'Only lower case letters (a-z), numbers and dashes are allowed.<br />Once saved, the identifier can not be changed.'
+  text_project_identifier_info: 'Only lower case letters (a-z), numbers and dashes are allowed.<br />Once saved, the identifier cannot be changed.'
   text_caracters_maximum: "%{count} characters maximum."
   text_caracters_minimum: "Must be at least %{count} characters long."
   text_length_between: "Length between %{min} and %{max} characters."
@@ -875,8 +905,8 @@ en:
   text_issues_ref_in_commit_messages: Referencing and fixing issues in commit messages
   text_issue_added: "Issue %{id} has been reported by %{author}."
   text_issue_updated: "Issue %{id} has been updated by %{author}."
-  text_wiki_destroy_confirmation: Are you sure you want to delete this wiki and all its content ?
-  text_issue_category_destroy_question: "Some issues (%{count}) are assigned to this category. What do you want to do ?"
+  text_wiki_destroy_confirmation: Are you sure you want to delete this wiki and all its content?
+  text_issue_category_destroy_question: "Some issues (%{count}) are assigned to this category. What do you want to do?"
   text_issue_category_destroy_assignments: Remove category assignments
   text_issue_category_reassign_to: Reassign issues to this category
   text_user_mail_option: "For unselected projects, you will only receive notifications about things you watch or you're involved in (eg. issues you're the author or assignee)."
@@ -884,13 +914,15 @@ en:
   text_load_default_configuration: Load the default configuration
   text_status_changed_by_changeset: "Applied in changeset %{value}."
   text_time_logged_by_changeset: "Applied in changeset %{value}."
-  text_issues_destroy_confirmation: 'Are you sure you want to delete the selected issue(s) ?'
+  text_issues_destroy_confirmation: 'Are you sure you want to delete the selected issue(s)?'
+  text_issues_destroy_descendants_confirmation: "This will also delete %{count} subtask(s)."
+  text_time_entries_destroy_confirmation: 'Are you sure you want to delete the selected time entr(y/ies)?'
   text_select_project_modules: 'Select modules to enable for this project:'
   text_default_administrator_account_changed: Default administrator account changed
   text_file_repository_writable: Attachments directory writable
   text_plugin_assets_writable: Plugin assets directory writable
   text_rmagick_available: RMagick available (optional)
-  text_destroy_time_entries_question: "%{hours} hours were reported on the issues you are about to delete. What do you want to do ?"
+  text_destroy_time_entries_question: "%{hours} hours were reported on the issues you are about to delete. What do you want to do?"
   text_destroy_time_entries: Delete reported hours
   text_assign_time_entries_to_project: Assign reported hours to the project
   text_reassign_time_entries: 'Reassign reported hours to this issue:'
@@ -908,7 +940,15 @@ en:
   text_own_membership_delete_confirmation: "You are about to remove some or all of your permissions and may no longer be able to edit this project after that.\nAre you sure you want to continue?"
   text_zoom_in: Zoom in
   text_zoom_out: Zoom out
-  
+  text_warn_on_leaving_unsaved: "The current page contains unsaved text that will be lost if you leave this page."
+  text_scm_path_encoding_note: "Default: UTF-8"
+  text_git_repository_note: "Bare and local repository (e.g. /gitrepo, c:\gitrepo)"
+  text_mercurial_repository_note: "Local repository (e.g. /hgrepo, c:\hgrepo)"
+  text_scm_command: Command
+  text_scm_command_version: Version
+  text_scm_config: You can configure your scm commands in config/configuration.yml. Please restart the application after editing it.
+  text_scm_command_not_available: Scm command is not available. Please check settings on the administration panel.
+
   default_role_manager: Manager
   default_role_developer: Developer
   default_role_reporter: Reporter
@@ -930,9 +970,8 @@ en:
   default_priority_immediate: Immediate
   default_activity_design: Design
   default_activity_development: Development
-  
+
   enumeration_issue_priorities: Issue priorities
   enumeration_doc_categories: Document categories
   enumeration_activities: Activities (time tracking)
   enumeration_system_activity: System Activity
-

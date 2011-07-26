@@ -13,7 +13,7 @@ module Redmine
           
           class_eval do
             has_many :watchers, :as => :watchable, :dependent => :delete_all
-            has_many :watcher_users, :through => :watchers, :source => :user
+            has_many :watcher_users, :through => :watchers, :source => :user, :validate => false
             
             named_scope :watched_by, lambda { |user_id|
               { :include => :watchers,
@@ -31,7 +31,11 @@ module Redmine
         
         # Returns an array of users that are proposed as watchers
         def addable_watcher_users
-          self.project.users.sort - self.watcher_users
+          users = self.project.users.sort - self.watcher_users
+          if respond_to?(:visible?)
+            users.reject! {|user| !visible?(user)}
+          end
+          users
         end
         
         # Adds user as a watcher
@@ -58,7 +62,8 @@ module Redmine
         # Returns an array of watchers' email addresses
         def watcher_recipients
           notified = watcher_users.active
-
+          notified.reject! {|user| user.mail_notification == 'none'}
+          
           if respond_to?(:visible?)
             notified.reject! {|user| !visible?(user)}
           end

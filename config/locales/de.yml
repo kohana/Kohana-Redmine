@@ -1,5 +1,6 @@
 # German translations for Ruby on Rails
 # by Clemens Kofler (clemens@railway.at)
+# additions for Redmine 1.2 by Jens Martsch (jmartsch@gmail.com)
 
 de:
   direction: ltr
@@ -19,7 +20,10 @@ de:
     month_names: [~, Januar, Februar, März, April, Mai, Juni, Juli, August, September, Oktober, November, Dezember]
     abbr_month_names: [~, Jan, Feb, Mär, Apr, Mai, Jun, Jul, Aug, Sep, Okt, Nov, Dez]
     # Used in date_select and datime_select.
-    order: [:day, :month, :year]
+    order:
+      - :day
+      - :month
+      - :year
 
   time:
     formats:
@@ -152,7 +156,7 @@ de:
   general_csv_separator: ';'
   general_csv_decimal_separator: ','
   general_csv_encoding: ISO-8859-1
-  general_pdf_encoding: ISO-8859-1
+  general_pdf_encoding: UTF-8
   general_first_day_of_week: '1'
 
   notice_account_updated: Konto wurde erfolgreich aktualisiert.
@@ -283,7 +287,7 @@ de:
   field_attr_mail: E-Mail-Attribut
   field_onthefly: On-the-fly-Benutzererstellung
   field_start_date: Beginn
-  field_done_ratio: % erledigt
+  field_done_ratio: "% erledigt"
   field_auth_source: Authentifizierungs-Modus
   field_hide_mail: E-Mail-Adresse nicht anzeigen
   field_comments: Kommentar
@@ -341,7 +345,6 @@ de:
   setting_cross_project_issue_relations: Ticket-Beziehungen zwischen Projekten erlauben
   setting_issue_list_default_columns: Default-Spalten in der Ticket-Auflistung
   setting_repositories_encodings: Kodierungen der Projektarchive
-  setting_commit_logs_encoding: Kodierung der Commit-Log-Meldungen
   setting_emails_footer: E-Mail-Fußzeile
   setting_protocol: Protokoll
   setting_per_page_options: Objekte pro Seite
@@ -947,9 +950,48 @@ de:
   field_member_of_group: Zuständigkeitsgruppe
   field_assigned_to_role: Zuständigkeitsrolle
   field_visible: Sichtbar
-  setting_emails_header: Emailkopf
+  setting_emails_header: E-Mail Betreffzeile
   setting_commit_logtime_activity_id: Aktivität für die Zeiterfassung
   text_time_logged_by_changeset: Angewendet in Changeset %{value}.
   setting_commit_logtime_enabled: Aktiviere Zeitlogging
   notice_gantt_chart_truncated: Die Grafik ist unvollständig, da das Maximum der anzeigbaren Aufgaben überschritten wurde (%{max})
   setting_gantt_items_limit: Maximale Anzahl von Aufgaben die im Gantt-Chart angezeigt werden.
+  field_warn_on_leaving_unsaved: vor dem Verlassen einer Seite mit ungesichertem Text im Editor warnen
+  text_warn_on_leaving_unsaved: Die aktuellen Änderungen gehen verloren, wenn Sie diese Seite verlassen.
+  label_my_queries: Meine eigenen Abfragen
+  text_journal_changed_no_detail: "%{label} aktualisiert"
+  label_news_comment_added: Kommentar zu einer News hinzugefügt
+  button_expand_all: Alle ausklappen
+  button_collapse_all: Alle einklappen
+  label_additional_workflow_transitions_for_assignee: Zusätzliche Berechtigungen wenn der Benutzer der Zugewiesene ist
+  label_additional_workflow_transitions_for_author: Zusätzliche Berechtigungen wenn der Benutzer der Autor ist
+  label_bulk_edit_selected_time_entries: Ausgewählte Zeitaufwände bearbeiten
+  text_time_entries_destroy_confirmation: Sind Sie sicher, dass Sie die ausgewählten Zeitaufwände löschen möchten?
+  label_role_anonymous: Anonymous
+  label_role_non_member: Nichtmitglied
+  label_issue_note_added: Notiz hinzugefügt
+  label_issue_status_updated: Status aktualisiert
+  label_issue_priority_updated: Priorität aktualisiert
+  label_issues_visibility_own: Tickets die folgender User erstellt hat oder die ihm zugewiesen sind
+  field_issues_visibility: Ticket Sichtbarkeit
+  label_issues_visibility_all: Alle Tickets
+  permission_set_own_issues_private: Eigene Tickets privat oder öffentlich markieren
+  field_is_private: Privat
+  permission_set_issues_private: Tickets privat oder öffentlich markieren
+  label_issues_visibility_public: Alle öffentlichen Tickets
+  text_issues_destroy_descendants_confirmation: Dies wird auch %{count} Unteraufgabe/n löschen.
+  field_commit_logs_encoding: Kodierung der Commit-Log-Meldungen
+  field_scm_path_encoding: Pfad Kodierung
+  text_scm_path_encoding_note: "Standard: UTF-8"
+  field_path_to_repository: Pfad zum repository
+  field_root_directory: Wurzelverzeichnis
+  field_cvs_module: Modul
+  field_cvsroot: CVSROOT
+  text_git_repository_note: Bare und lokales repository (e.g. /gitrepo, c:\gitrepo)
+  text_mercurial_repository_note: Lokales repository (e.g. /hgrepo, c:\hgrepo)
+  text_scm_command: Kommando
+  text_scm_command_version: Version
+  label_git_report_last_commit: Bericht des letzten Commits für Dateien und Verzeichnisse
+  text_scm_config: Die SCM-Kommandos können in der in config/configuration.yml konfiguriert werden. Redmine muss anschließend neu gestartet werden.
+  text_scm_command_not_available: Scm Kommando ist nicht verfügbar. Bitte prüfen Sie die Einstellungen im Administrationspanel.
+
