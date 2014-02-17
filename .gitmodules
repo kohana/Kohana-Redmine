@@ -1,0 +1,3 @@
+[submodule "public/themes/kohana"]
+	path = public/themes/kohana
+	url = git@github.com:kohana/redmine-theme-kohana.git
