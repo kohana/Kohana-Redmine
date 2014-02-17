@@ -38,4 +38,4 @@
 /.bundle
 /Gemfile.lock
 /Gemfile.local
-
+*.swp

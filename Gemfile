@@ -1,5 +1,10 @@
 source 'https://rubygems.org'
 
+# Added by Kohana
+gem 'capistrano', '~> 3.1.0'
+gem 'capistrano-chruby', '~> 0.1.1'
+gem 'unicorn', '4.8.2'
+
 gem "rails", "3.2.16"
 gem "jquery-rails", "~> 2.0.2"
 gem "coderay", "~> 1.1.0"
