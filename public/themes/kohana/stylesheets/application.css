@@ -1,0 +1,48 @@
+/* load the default Redmine stylesheet */
+@import url(../../alternate/stylesheets/application.css);
+@import url(wiki.css);
+
+body, #wrapper { background: #f1f8db; }
+
+#top-menu { margin: 0; padding: 5px 5px 2px; background: #00262f; font-weight: normal; }
+	#top-menu a { font-weight: normal; color: #efefef; }
+	#top-menu a:hover { color: #fff; }
+
+#header { margin: 0; padding: 30px 5px 20px; padding-left: 210px; background: #77c244 url(../images/kohana.png) 5px 10px no-repeat; }
+	#header h1 { margin: 0 0 10px; }
+
+#main-menu { left: 5px; }
+	#main-menu li { margin: 0; }
+		#main-menu li a { padding: 6px 12px; background: #113c32; font-weight: normal; border: solid 1px #134237; border-right-color: #10382f; border-bottom: 0; color: #efefef; text-shadow: #113c32 0.1em 0.1em 1px; }
+		#main-menu li a:hover { background: #175648; border-color: #175648; color: #fff; text-shadow: #111 0.1em 0.1em 1px; text-decoration: none; }
+		#main-menu li a.selected { background: #f1f8db; border-color: #f1f8db; text-shadow: none; }
+		#main-menu li a.selected:hover { background: #f1f8db; }
+
+#main { background: #f1f8db; }
+	#wrapper #main #content { border-right: 1px solid #d7d7d7; } /* We need the right-hand border, always */
+
+	#history .journal { margin: 0; padding: 0.6em; padding-left: 45px; }
+	#history .journal:nth-child(odd) { background: #f3f3f3; }
+	#history .journal h4 { margin-top: 0; margin-left: -40px; }
+	#history .journal img.gravatar { border: 0; padding: 0; margin: 0 0.4em 0 0; }
+		#history .journal ul { list-style: square; }
+
+	#main #issue-changesets { float: none; width: auto; margin: 10px 0; }
+
+
+#footer { margin-top: 10px; padding: 12px 8px 12px 126px; min-height: 24px; background: #00262f url(http://v3.kohanaphp.com/media/img/kohana_dark.png) 12px center no-repeat; color: #405c63; text-align: left; line-height: 24px; vertical-align: middle; }
+	#footer a { color: #405c63; text-decoration: underline; }
+
+div.syntaxhighlighter {
+	margin:1em 1em 1em 1.6em !important;
+	width: 95% !important;
+}
+
+div.journal div.wiki div.syntaxhighlighter {
+	width: 90% !important;
+}
+
+a.issue { font-weight: bold; }
+a.issue.closed, a.issue.closed:link, a.issue.closed:visited { font-weight: normal; text-decoration: line-through; color: #888; }
+
+#relations table.issues td { border: 0 none; }
